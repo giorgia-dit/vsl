@@ -5,6 +5,21 @@ import logging
 from sklearn.model_selection import train_test_split
 
 
+def my_args():
+    file = 'it_isdt-ud-'
+    output_dir = 'input/preprocessed'
+
+    args = argparse.Namespace()
+
+    args.train = f"./input/{file}train.conllu"
+    args.dev = f"./input/{file}dev.conllu"
+    args.test = f"./input/{file}test.conllu"
+    args.output = f"./{output_dir}/{file}pproc"
+    args.labratio = 0.2
+    args.unlabratio = 0.5
+    return args
+
+
 def get_args():
     parser = argparse.ArgumentParser(
         description='Data Preprocessing for Universal Dependencies')
@@ -52,7 +67,7 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG,
                         format='%(asctime)s %(message)s',
                         datefmt='%m-%d %H:%M')
-    args = get_args()
+    args = my_args()
     logging.info("##### training data #####")
     all_sents, all_tags = load_data(args.train)
     logging.info("random splitting training data with ratio of {}..."
@@ -80,7 +95,8 @@ if __name__ == "__main__":
 
     tag_set = set(sum([sum(d, []) for d in [all_tags, dev_tags, test_tags]],
                   []))
-    with open("./output/ud_tagfile", "w+", encoding='utf-8') as fp:
+    output_dir = '.' if args.output is None else output.rsplit('/', maxsplit=1)[0]
+    with open(f"{output_dir}/ud_tagfile", "w+", encoding='utf-8') as fp:
         fp.write('\n'.join(sorted(list(tag_set))))
     dataset = {"train": [train_sents, train_tags],
                "unlabel": [unlabel_sents, unlabel_tags],

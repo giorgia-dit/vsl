@@ -1,3 +1,5 @@
+import argparse
+
 import torch
 import config
 import train_helper
@@ -7,6 +9,8 @@ import numpy as np
 
 from models import vsl_g
 from tensorboardX import SummaryWriter
+
+from datetime import datetime
 
 best_dev_res = test_res = 0
 
@@ -71,7 +75,8 @@ def run(e):
     e.log.info("*" * 25 + " MODEL INITIALIZATION " + "*" * 25)
 
     if e.config.summarize:
-        writer = SummaryWriter(e.experiment_dir)
+        output_dir = e.config.prior_file.rsplit('/', maxsplit=1)[0]
+        writer = SummaryWriter(output_dir)
 
     label_batch = data_utils.minibatcher(
         word_data=data.train[0],
@@ -209,11 +214,66 @@ def run(e):
                        .format(best_dev_res, test_res))
             label_stats.reset()
             unlabel_stats.reset()
+            
+
+def my_args():
+    file = 'it_isdt-ud-'
+    lang = 'it'
+    datatype = 'ud'
+    today = datetime.today().strftime('%Y-%m-%d-%H:%M:%S')
+    output_dir = 'output_' + today
+
+    args = argparse.Namespace()
+
+    args.batch_size = 10
+    args.cdim = 50
+    args.char_vocab_size = 300
+    args.chsize = 100
+    args.data_file = f"./input/preprocessed/{file}pproc.{datatype}"
+    args.debug = True
+    args.edim = 100
+    args.embed_file = f"./input/{lang}.bin"
+    args.embed_type = f"{datatype}"
+    args.eval_every = 10000
+    args.f1_score = False
+    args.grad_clip = 10.0
+    args.klr = 0.0001
+    args.l2 = 0.0
+    args.lr = 0.001
+    args.mhsize = 100
+    args.mlayer = 2
+    args.model = 'g'
+    args.n_iter = 1
+    args.opt = 'adam'
+    args.prefix = None
+    args.print_every = 5000
+    args.prior_file = f"./{output_dir}/test_g"
+    args.random_seed = 0
+    args.rsize = 100
+    args.rtype = 'gru'
+    args.save_prior = True
+    args.summarize = True
+    args.tag_file = f"./input/preprocessed/{datatype}_tagfile"
+    args.train_emb = False
+    args.tw = True
+    args.ufl = 1
+    args.ufu = 1
+    args.unlabel_batch_size = 10
+    args.unlabel_file = None
+    args.ur = 0.1
+    args.use_cuda = False
+    args.use_unlabel = True
+    args.vocab_file = f"./{output_dir}/{file}vocab"
+    args.vocab_size = 100000
+    args.xvar = 0.001
+    args.ysize = 25
+    args.zsize = 50
+    return args
 
 
 if __name__ == '__main__':
 
-    args = config.get_parser().parse_args()
+    args = my_args()
     args.use_cuda = torch.cuda.is_available()
 
     def exit_handler(*args):

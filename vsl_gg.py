@@ -1,3 +1,5 @@
+import argparse
+
 import torch
 import config
 import train_helper
@@ -261,10 +263,66 @@ def run(e):
             unlabel_stats.reset()
 
 
+def my_args():
+    file = 'it_isdt-ud-'
+    lang = 'it'
+    datatype = 'ud'
+    model = 'flat'
+    output_dir = 'output'
+
+    args = argparse.Namespace()
+
+    args.batch_size = 10
+    args.cdim = 50
+    args.char_vocab_size = 300
+    args.chsize = 100
+    args.data_file = f"./{output_dir}/{file}pproc.ud"
+    args.debug = True
+    args.edim = 100
+    args.embed_file = f"./input/{lang}.bin"
+    args.embed_type = f"{datatype}"
+    args.eval_every = 10000
+    args.f1_score = False
+    args.grad_clip = 10.0
+    args.klr = 0.0001
+    args.l2 = 0.0
+    args.lr = 0.001
+    args.mhsize = 100
+    args.mlayer = 2
+    args.model = f"{model}"
+    args.n_iter = 2
+    args.opt = f"adam"
+    args.prefix = None
+    args.print_every = 5000
+    args.prior_file = f"./{output_dir}/test_gg_{model}"
+    args.random_seed = 0
+    args.rsize = 100
+    args.rtype = f"gru"
+    args.save_prior = True
+    args.summarize = True
+    args.tag_file = f"./{output_dir}/{datatype}_tagfile"
+    args.train_emb = False
+    args.tw = True
+    args.ufl = 1
+    args.ufu = 1
+    args.unlabel_batch_size = 10
+    args.unlabel_file = None
+    args.ur = 0.1
+    args.use_cuda = False
+    args.use_unlabel = True
+    args.vocab_file = f"./{output_dir}/{file}vocab"
+    args.vocab_size = 100000
+    args.xvar = 0.001
+    args.ysize = 25
+    args.zsize = 50
+
+    return args
+
 if __name__ == '__main__':
 
-    args = config.get_parser().parse_args()
+    args = my_args()
     args.use_cuda = torch.cuda.is_available()
+
 
     def exit_handler(*args):
         print(args)

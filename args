@@ -2,9 +2,9 @@
 
 ... = {fr-ud-, it_isdt-ud-, it_postwita-ud-}
 
---train "/datasets/...train.conllu" \
---dev "/datasets/...dev.conllu" \
---test "/datasets/...test.conllu" \
+--train "/input/...train.conllu" \
+--dev "/input/...dev.conllu" \
+--test "/input/...test.conllu" \
 --output "{fr,it}_{isdt,pos}_{ud14,ud25}_pproc" \
 --labratio 0.2 \
 --unlabratio 0.2 \
@@ -12,9 +12,9 @@
 
 *** process_twitter_data.py ***
 
---train "/datasets/oct27.traindev" \
---dev "/datasets/oct27.test" \
---test "/datasets/daily547.conll" \
+--train "/input/oct27.traindev" \
+--dev "/input/oct27.test" \
+--test "/input/daily547.conll" \
 --output "en_twitter_pproc" \
 --ratio 1.0 \
 
