@@ -1,0 +1,5 @@
+# torch==1.4.0
+numpy
+scikit-learn
+tensorboardX==1.4
+gensim==3.5.0
