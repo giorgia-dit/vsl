@@ -1,9 +1,20 @@
+#!/usr/bin/env python3
+
 import pickle
 import argparse
 import logging
 
 from sklearn.model_selection import train_test_split
 
+
+def my_args():
+
+    args = argparse.Namespace()
+
+    args.train = "./input/train_valid.txt"
+    args.test = "./input/test.txt"
+    args.ratio = 1
+    return args
 
 def get_args():
     parser = argparse.ArgumentParser(
@@ -44,17 +55,17 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG,
                         format='%(asctime)s %(message)s',
                         datefmt='%m-%d %H:%M')
-    args = get_args()
+    args = my_args()
     train_dev = process_file(args.train)
-    test = process_file(args.test)
+    test = list(process_file(args.test))
     train_sents, dev_sents, train_tags, dev_tags = \
-            train_test_split(train_dev[0], train_dev[1], test_size=0.10)
+            train_test_split(train_dev[0], train_dev[1], test_size=0.1)
     train = [train_sents, train_tags]
     dev = [dev_sents, dev_tags]
 
     tag_set = set(sum([sum(d[1], []) for d in [train, dev, test]],
                   []))
-    with open("./output/evalita_tagfile", "w+", encoding='utf-8') as fp:
+    with open(f"./input/preprocessed/evalita_tagfile", "w+", encoding='utf-8') as fp:
         fp.write('\n'.join(sorted(list(tag_set))))
 
     if args.ratio != 1:
@@ -73,4 +84,4 @@ if __name__ == "__main__":
                "test": test}
 
     pickle.dump(
-        dataset, open("./output/evalita_data", "wb+"), protocol=-1)
+        dataset, open(f"./input/preprocessed/pproc.evalita", "wb+"), protocol=-1)

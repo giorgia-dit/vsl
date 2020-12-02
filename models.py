@@ -25,7 +25,7 @@ class base(nn.Module):
         self.word_embed = nn.Embedding(word_vocab_size, embed_dim)
 
         if embed_init is not None:
-            self.word_embed.weight.data.copy_(torch.from_numpy(embed_init))
+            self.word_embed.weight.data.copy_(embed_init)
             self.expe.log.info("Initialized with pretrained word embedding")
         if not self.expe.config.train_emb:
             self.word_embed.weight.requires_grad = False
@@ -55,21 +55,21 @@ class base(nn.Module):
         if self.use_cuda:
             if isinstance(inputs, Variable):
                 inputs = inputs.cuda()
-                inputs.volatile = self.volatile
+                inputs.requires_grad_(self.volatile)
                 return inputs
             else:
                 if not torch.is_tensor(inputs):
                     inputs = torch.from_numpy(inputs)
-                return Variable(inputs.cuda(), volatile=self.volatile)
+                return Variable(inputs.cuda(), requires_grad=self.volatile)
         else:
             if isinstance(inputs, Variable):
                 inputs = inputs.cpu()
-                inputs.volatile = self.volatile
+                inputs.requires_grad_(self.volatile)
                 return inputs
             else:
                 if not torch.is_tensor(inputs):
                     inputs = torch.from_numpy(inputs)
-                return Variable(inputs, volatile=self.volatile)
+                return Variable(inputs, requires_grad=self.volatile)
 
     def to_vars(self, *inputs):
         return [self.to_var(inputs_) if inputs_ is not None and inputs_.size
@@ -79,7 +79,7 @@ class base(nn.Module):
         self.opt.zero_grad()
         loss.backward()
         if self.expe.config.grad_clip is not None:
-            torch.nn.utils.clip_grad_norm(
+            torch.nn.utils.clip_grad_norm_(
                 self.parameters(), self.expe.config.grad_clip)
         self.opt.step()
 

@@ -106,7 +106,8 @@ class experiment:
     @property
     def experiment_dir(self):
         if self.config.debug:
-            return "./"
+            output_dir = self.config.prior_file.rsplit('/', maxsplit=1)[0]
+            return f"{output_dir}"
         else:
             # get namespace for each group of args
             arg_g = dict()
@@ -139,18 +140,12 @@ class experiment:
 
     def __enter__(self):
 
-        if self.config.debug:
-            logging.basicConfig(
-                level=logging.DEBUG,
-                format='%(asctime)s %(levelname)s: %(message)s',
-                datefmt='%m-%d %H:%M')
-        else:
-            print("log saving to", self.log_file)
-            logging.basicConfig(
-                filename=self.log_file,
-                filemode='w+', level=logging.INFO,
-                format='%(asctime)s %(levelname)s: %(message)s',
-                datefmt='%m-%d %H:%M')
+        print("log saving to", self.log_file)
+        logging.basicConfig(
+            filename=self.log_file,
+            filemode='w+', level=logging.DEBUG,
+            format='%(asctime)s %(levelname)s: %(message)s',
+            datefmt='%m-%d %H:%M')
 
         self.log = logging.getLogger()
         return self
@@ -333,12 +328,13 @@ class evaluator:
             reporter = f1_reporter(self.inv_tag_vocab)
         else:
             reporter = accuracy_reporter()
+        # self.expe.log.info(f"Evaluating with batch size: {self.expe.config.batch_size}")
         for data, mask, char, char_mask, label, _ in \
             minibatcher(
                 word_data=data[0],
                 char_data=data[1],
                 label=data[2],
-                batch_size=100,
+                batch_size=self.expe.config.batch_size,
                 shuffle=False):
             outputs = self.model(data, mask, char, char_mask,
                                  label, None, None, 1.0)

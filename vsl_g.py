@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import argparse
 
 import torch
@@ -217,9 +219,8 @@ def run(e):
             
 
 def my_args():
-    file = 'it_isdt-ud-'
-    lang = 'it'
-    datatype = 'ud'
+    file = 'it_isdt-ud-'  # {'' (evalita), 'it_isdt-ud-', 'it_postwita-ud-', 'fr-ud-'}
+    data_group = 'ud'  # {ud, evalita}
     today = datetime.today().strftime('%Y-%m-%d-%H:%M:%S')
     output_dir = 'output_' + today
 
@@ -229,31 +230,31 @@ def my_args():
     args.cdim = 50
     args.char_vocab_size = 300
     args.chsize = 100
-    args.data_file = f"./input/preprocessed/{file}pproc.{datatype}"
+    args.data_file = f"./input/preprocessed/{file}pproc.{data_group}"
     args.debug = True
-    args.edim = 100
-    args.embed_file = f"./input/{lang}.bin"
-    args.embed_type = f"{datatype}"
-    args.eval_every = 10000
+    args.edim = 768
+    args.embed_file = None  # f"./input/word_vectors_{file}pproc.{data_group}"
+    args.embed_type = 'bert'
+    args.eval_every = 10000  # FIX: 10000 (2)
     args.f1_score = False
     args.grad_clip = 10.0
     args.klr = 0.0001
     args.l2 = 0.0
     args.lr = 0.001
-    args.mhsize = 100
+    args.mhsize = 450  # authors value: 100
     args.mlayer = 2
     args.model = 'g'
-    args.n_iter = 1
+    args.n_iter = 30000  # FIX: 30000 (10)
     args.opt = 'adam'
     args.prefix = None
-    args.print_every = 5000
+    args.print_every = 5000  # FIX: 5000 (2)
     args.prior_file = f"./{output_dir}/test_g"
     args.random_seed = 0
-    args.rsize = 100
+    args.rsize = 450  # authors value: 100
     args.rtype = 'gru'
     args.save_prior = True
     args.summarize = True
-    args.tag_file = f"./input/preprocessed/{datatype}_tagfile"
+    args.tag_file = f"./input/preprocessed/{data_group}_tagfile"
     args.train_emb = False
     args.tw = True
     args.ufl = 1
@@ -262,12 +263,12 @@ def my_args():
     args.unlabel_file = None
     args.ur = 0.1
     args.use_cuda = False
-    args.use_unlabel = True
+    args.use_unlabel = False
     args.vocab_file = f"./{output_dir}/{file}vocab"
     args.vocab_size = 100000
     args.xvar = 0.001
     args.ysize = 25
-    args.zsize = 50
+    args.zsize = 100  # authors value: 50
     return args
 
 

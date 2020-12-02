@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import pickle
 import argparse
 import logging
@@ -15,8 +17,8 @@ def my_args():
     args.dev = f"./input/{file}dev.conllu"
     args.test = f"./input/{file}test.conllu"
     args.output = f"./{output_dir}/{file}pproc"
-    args.labratio = 0.2
-    args.unlabratio = 0.5
+    args.labratio = 1.0
+    args.unlabratio = None
     return args
 
 
@@ -72,9 +74,23 @@ if __name__ == "__main__":
     all_sents, all_tags = load_data(args.train)
     logging.info("random splitting training data with ratio of {}..."
                  .format(args.labratio))
-    train_sents, unlabel_sents, train_tags, unlabel_tags = \
-        train_test_split(all_sents, all_tags,
-                         train_size=args.labratio, test_size=args.unlabratio, shuffle=True)
+    if args.labratio == 1.0:
+        train_sents, unlabel_sents, train_tags, unlabel_tags = all_sents, [], all_tags, []
+    else:
+        train_sents, unlabel_sents, train_tags, unlabel_tags = \
+            train_test_split(all_sents, all_tags,
+                             train_size=args.labratio, test_size=args.unlabratio, shuffle=True)
+
+    filtered_train_sents = []
+    filtered_train_tags = []
+
+    for sent, tag in zip(train_sents, train_tags):
+        if len(sent) <= 80:
+            filtered_train_sents.append(sent)
+            filtered_train_tags.append(tag)
+    train_sents = filtered_train_sents
+    train_tags = filtered_train_tags
+
     logging.info("#train sents: {}, #train words: {}, #train tags: {}"
                  .format(len(train_sents), len(sum(train_sents, [])),
                          len(sum(train_tags, []))))
@@ -94,7 +110,7 @@ if __name__ == "__main__":
     output += ".ud"
 
     tag_set = set(sum([sum(d, []) for d in [all_tags, dev_tags, test_tags]],
-                  []))
+                      []))
     output_dir = '.' if args.output is None else output.rsplit('/', maxsplit=1)[0]
     with open(f"{output_dir}/ud_tagfile", "w+", encoding='utf-8') as fp:
         fp.write('\n'.join(sorted(list(tag_set))))
