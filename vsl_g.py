@@ -249,7 +249,7 @@ def my_args():
     args.prefix = None
     args.print_every = 5000  # FIX: 5000 (2)
     args.prior_file = f"./{output_dir}/test_g"
-    args.random_seed = 0
+    args.random_seed = 0  # {0, 1, 15, 16, 17}
     args.rsize = 450  # authors value: 100
     args.rtype = 'gru'
     args.save_prior = True
