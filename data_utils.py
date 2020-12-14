@@ -55,7 +55,7 @@ class data_processor:
             if self.expe.config.embed_type == 'ud' or self.expe.config.embed_type == 'bert':
                 unlabeled_data = dataset['unlabel'][0]
 
-                # FIX
+                # TODO FIX
                 # unlabeled_data = unlabeled_data[:3]
 
             else:

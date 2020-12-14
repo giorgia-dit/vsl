@@ -31,11 +31,12 @@ class base(nn.Module):
             self.word_embed.weight.requires_grad = False
             self.expe.log.info("Word Embedding not trainable")
 
-        self.word_encoder = model_utils.get_rnn(self.expe.config.rtype)(
-            input_size=(embed_dim + 2 * self.expe.config.chsize),
-            hidden_size=self.expe.config.rsize,
-            bidirectional=True,
-            batch_first=True)
+        # TODO CHECK
+        # self.word_encoder = model_utils.get_rnn(self.expe.config.rtype)(
+        #     input_size=(embed_dim + 2 * self.expe.config.chsize),
+        #     hidden_size=self.expe.config.rsize,
+        #     bidirectional=True,
+        #     batch_first=True)
 
         self.x2token = nn.Linear(
             embed_dim, word_vocab_size, bias=False)
@@ -46,6 +47,7 @@ class base(nn.Module):
     def get_input_vecs(self, data, mask, char, char_mask):
         word_emb = self.word_embed(data.long())
 
+        # TODO CHECK
         char_input = self.char_encoder(char, char_mask, mask)
         data_emb = torch.cat([char_input, word_emb], dim=-1)
 
@@ -143,7 +145,7 @@ class vsl_g(base):
             n_tags, experiment)
         assert self.expe.config.model.lower() == "g"
         self.to_latent_variable = sl.gaussian_layer(
-            input_size=2 * self.expe.config.rsize,
+            input_size=self.expe.config.edim + 2 * self.expe.config.chsize,
             latent_z_size=self.expe.config.zsize)
 
         self.classifier = nn.Linear(self.expe.config.zsize, n_tags)
@@ -163,11 +165,11 @@ class vsl_g(base):
 
         batch_size, batch_len = data.size()
         input_vecs = self.get_input_vecs(data, mask, char, char_mask)
-        hidden_vecs, _, _ = model_utils.get_rnn_output(
-            input_vecs, mask, self.word_encoder)
+        # hidden_vecs, _, _ = model_utils.get_rnn_output(
+        #     input_vecs, mask, self.word_encoder)
 
         z, mean_qs, logvar_qs = \
-            self.to_latent_variable(hidden_vecs, mask, self.sampling)
+            self.to_latent_variable(input_vecs, mask, self.sampling)
 
         mean_x = self.z2x(z)
 
@@ -224,13 +226,13 @@ class vsl_gg(base):
             n_tags, experiment)
         if self.expe.config.model.lower() == "flat":
             self.to_latent_variable = sl.gaussian_flat_layer(
-                input_size=2 * self.expe.config.rsize,
+                input_size=self.expe.config.edim + 2 * self.expe.config.chsize,
                 latent_z_size=self.expe.config.zsize,
                 latent_y_size=self.expe.config.ysize)
             yzsize = self.expe.config.zsize + self.expe.config.ysize
         elif self.expe.config.model.lower() == "hier":
             self.to_latent_variable = sl.gaussian_hier_layer(
-                input_size=2 * self.expe.config.rsize,
+                input_size=self.expe.config.edim + 2 * self.expe.config.chsize,
                 latent_z_size=self.expe.config.zsize,
                 latent_y_size=self.expe.config.ysize)
             yzsize = self.expe.config.zsize
@@ -263,11 +265,11 @@ class vsl_gg(base):
 
         batch_size, batch_len = data.size()
         input_vecs = self.get_input_vecs(data, mask, char, char_mask)
-        hidden_vecs, _, _ = model_utils.get_rnn_output(
-            input_vecs, mask, self.word_encoder)
+        # hidden_vecs, _, _ = model_utils.get_rnn_output(
+        #     input_vecs, mask, self.word_encoder) # TODO FIX
 
         z, y, mean_qs, logvar_qs, mean2_qs, logvar2_qs = \
-            self.to_latent_variable(hidden_vecs, mask, self.sampling)
+            self.to_latent_variable(input_vecs, mask, self.sampling)
 
         if self.expe.config.model.lower() == "flat":
             yz = torch.cat([z, y], dim=-1)

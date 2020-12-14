@@ -271,7 +271,7 @@ def run(e):
 def my_args():
     file = 'it_isdt-ud-'  # {'' (evalita), 'it_isdt-ud-', 'it_postwita-ud-', 'fr-ud-'}
     data_group = 'ud'  # {ud, evalita}
-    model = 'flat'
+    model = 'hier'
     today = datetime.today().strftime('%Y-%m-%d-%H:%M:%S')
     output_dir = 'output_' + today
 
@@ -300,7 +300,7 @@ def my_args():
     args.prefix = None
     args.print_every = 5000 # FIX: 5000 (2)
     args.prior_file = f"./{output_dir}/test_gg_{model}"
-    args.random_seed = 15  # {0, 1, 15, 16, 17}
+    args.random_seed = 0  # {0, 1, 15, 16, 17}
     args.rsize = 500  # authors value: 100
     args.rtype = f"gru"
     args.save_prior = True

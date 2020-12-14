@@ -328,7 +328,7 @@ class evaluator:
             reporter = f1_reporter(self.inv_tag_vocab)
         else:
             reporter = accuracy_reporter()
-        # self.expe.log.info(f"Evaluating with batch size: {self.expe.config.batch_size}")
+        # self.expe.log.info(f"Evaluating with batch size: {self.expe.config.batch_size}") # TODO FIX
         for data, mask, char, char_mask, label, _ in \
             minibatcher(
                 word_data=data[0],

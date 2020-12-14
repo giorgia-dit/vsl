@@ -233,7 +233,7 @@ def my_args():
     args.data_file = f"./input/preprocessed/{file}pproc.{data_group}"
     args.debug = True
     args.edim = 768
-    args.embed_file = None  # f"./input/word_vectors_{file}pproc.{data_group}"
+    args.embed_file = f"./input/word_vectors_{file}pproc.{data_group}"
     args.embed_type = 'bert'
     args.eval_every = 10000  # FIX: 10000 (2)
     args.f1_score = False
@@ -273,7 +273,6 @@ def my_args():
 
 
 if __name__ == '__main__':
-
     args = my_args()
     args.use_cuda = torch.cuda.is_available()
 
