@@ -132,9 +132,9 @@ def run(e):
 
     e.log.info("Training start ...")
     label_stats = train_helper.tracker(
-        ["loss", "logloss", "kl_div", "sup_loss"])
+        ["loss", "logloss", "sup_loss"])
     unlabel_stats = train_helper.tracker(
-        ["loss", "logloss", "kl_div"])
+        ["loss", "logloss"])
 
     for it in range(e.config.n_iter):
         model.train()
@@ -164,7 +164,7 @@ def run(e):
         label_mean2_buffer.update_buffer(l_ixs, lq_mean2, l_mask.sum(-1))
 
         label_stats.update(
-            {"loss": l_loss, "logloss": l_logloss, "kl_div": l_kld,
+            {"loss": l_loss, "logloss": l_logloss,
              "sup_loss": sup_loss}, l_mask.sum())
 
         if not e.config.use_unlabel:
@@ -200,7 +200,7 @@ def run(e):
                 u_ixs, uq_mean2, u_mask.sum(-1))
 
             unlabel_stats.update(
-                {"loss": u_loss, "logloss": u_logloss, "kl_div": u_kld},
+                {"loss": u_loss, "logloss": u_logloss},
                 u_mask.sum())
 
             model.optimize(l_loss + e.config.ur * u_loss)
@@ -269,9 +269,9 @@ def run(e):
 
 
 def my_args():
-    file = 'it_isdt-ud-'  # {'' (evalita), 'it_isdt-ud-', 'it_postwita-ud-', 'fr-ud-'}
+    file = 'it_postwita-ud-'  # {'' (evalita), 'it_isdt-ud-', 'it_postwita-ud-', 'fr-ud-'}
     data_group = 'ud'  # {ud, evalita}
-    model = 'flat'
+    model = 'hier'
     today = datetime.today().strftime('%Y-%m-%d-%H:%M:%S')
     output_dir = 'output_' + today
 

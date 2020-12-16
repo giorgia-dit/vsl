@@ -192,17 +192,17 @@ class vsl_g(base):
             reduce=False).view_as(data) * mask
         log_loss = log_loss.sum(-1) / mask.sum(-1)
 
-        if prior_mean is not None and prior_logvar is not None:
-            kl_div = model_utils.compute_KL_div(
-                mean_qs, logvar_qs, prior_mean, prior_logvar)
-
-            kl_div = (kl_div * mask.unsqueeze(-1)).sum(-1)
-            kl_div = kl_div.sum(-1) / mask.sum(-1)
-
-            loss = log_loss + kl_temp * kl_div
-        else:
-            kl_div = None
-            loss = log_loss
+        # if prior_mean is not None and prior_logvar is not None:
+        #     kl_div = model_utils.compute_KL_div(
+        #         mean_qs, logvar_qs, prior_mean, prior_logvar)
+        #
+        #     kl_div = (kl_div * mask.unsqueeze(-1)).sum(-1)
+        #     kl_div = kl_div.sum(-1) / mask.sum(-1)
+        #
+        #     loss = log_loss + kl_temp * kl_div
+        # else:
+        kl_div = None
+        loss = log_loss
 
         if sup_loss is not None:
             loss = loss + sup_loss
@@ -297,20 +297,22 @@ class vsl_gg(base):
             reduce=False).view_as(data) * mask
         log_loss = log_loss.sum(-1) / mask.sum(-1)
 
-        if prior_mean is not None:
-            kl_div1 = model_utils.compute_KL_div(
-                mean_qs, logvar_qs, prior_mean1, prior_logvar1)
-            kl_div2 = model_utils.compute_KL_div(
-                mean2_qs, logvar2_qs, prior_mean2, prior_logvar2)
+        # EXPL: we do not include KL divergence in the loss function
 
-            kl_div = (kl_div1 * mask.unsqueeze(-1)).sum(-1) + \
-                (kl_div2 * mask.unsqueeze(-1)).sum(-1)
-            kl_div = kl_div.sum(-1) / mask.sum(-1)
+        # if prior_mean is not None:
+        #     kl_div1 = model_utils.compute_KL_div(
+        #         mean_qs, logvar_qs, prior_mean1, prior_logvar1)
+        #     kl_div2 = model_utils.compute_KL_div(
+        #         mean2_qs, logvar2_qs, prior_mean2, prior_logvar2)
+        #
+        #     kl_div = (kl_div1 * mask.unsqueeze(-1)).sum(-1) + \
+        #         (kl_div2 * mask.unsqueeze(-1)).sum(-1)
+        #     kl_div = kl_div.sum(-1) / mask.sum(-1)
 
-            loss = log_loss + kl_temp * kl_div
-        else:
-            kl_div = None
-            loss = log_loss
+        #    loss = log_loss + kl_temp * kl_div
+
+        kl_div = None
+        loss = log_loss
 
         if sup_loss is not None:
             loss = loss + sup_loss

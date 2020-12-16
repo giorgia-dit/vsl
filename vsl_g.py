@@ -99,12 +99,13 @@ def run(e):
 
     e.log.info("Training start ...")
     label_stats = train_helper.tracker(
-        ["loss", "logloss", "kl_div", "sup_loss"])
+        ["loss", "logloss", "sup_loss"])
     unlabel_stats = train_helper.tracker(
-        ["loss", "logloss", "kl_div"])
+        ["loss", "logloss"])
 
     for it in range(e.config.n_iter):
         model.train()
+        # kl_temp should be in principle removed (we don't do it for computational convenience)
         kl_temp = train_helper.get_kl_temp(e.config.klr, it, 1.0)
 
         try:
@@ -124,7 +125,7 @@ def run(e):
         label_mean_buffer.update_buffer(l_ixs, lq_mean, l_mask.sum(-1))
 
         label_stats.update(
-            {"loss": l_loss, "logloss": l_logloss, "kl_div": l_kld,
+            {"loss": l_loss, "logloss": l_logloss,
              "sup_loss": sup_loss}, l_mask.sum())
 
         if not e.config.use_unlabel:
@@ -150,7 +151,7 @@ def run(e):
                 u_ixs, uq_mean, u_mask.sum(-1))
 
             unlabel_stats.update(
-                {"loss": u_loss, "logloss": u_logloss, "kl_div": u_kld},
+                {"loss": u_loss, "logloss": u_logloss},
                 u_mask.sum())
 
             model.optimize(l_loss + e.config.ur * u_loss)
@@ -233,7 +234,7 @@ def my_args():
     args.data_file = f"./input/preprocessed/{file}pproc.{data_group}"
     args.debug = True
     args.edim = 768
-    args.embed_file = None  # f"./input/word_vectors_{file}pproc.{data_group}"
+    args.embed_file = f"./input/word_vectors_{file}pproc.{data_group}"
     args.embed_type = 'bert'
     args.eval_every = 10000  # FIX: 10000 (2)
     args.f1_score = False
