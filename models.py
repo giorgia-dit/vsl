@@ -142,39 +142,37 @@ class vsl_g(base):
             word_vocab_size, char_vocab_size, embed_dim, embed_init,
             n_tags, experiment)
         assert self.expe.config.model.lower() == "g"
-        self.to_latent_variable = sl.gaussian_layer(
+
+        self.to_latent_variable = sl.novae_layer(
             input_size=2 * self.expe.config.rsize,
-            latent_z_size=self.expe.config.zsize)
+            tf_size=self.expe.config.zsize)
 
         self.classifier = nn.Linear(self.expe.config.zsize, n_tags)
 
-        self.z2x = model_utils.get_mlp_layer(
-            input_size=self.expe.config.zsize,
-            hidden_size=self.expe.config.mhsize,
-            output_size=embed_dim,
-            n_layer=self.expe.config.mlayer)
+        # self.z2x = model_utils.get_mlp_layer(
+        #     input_size=self.expe.config.zsize,
+        #     hidden_size=self.expe.config.mhsize,
+        #     output_size=embed_dim,
+        #     n_layer=self.expe.config.mlayer)
 
     def forward(
-            self, data, mask, char, char_mask, label,
-            prior_mean, prior_logvar, kl_temp):
-        data, mask, char, char_mask, label, prior_mean, prior_logvar = \
-            self.to_vars(data, mask, char, char_mask, label,
-                         prior_mean, prior_logvar)
+            self, data, mask, char, char_mask, label):
+        data, mask, char, char_mask, label = \
+            self.to_vars(data, mask, char, char_mask, label)
 
         batch_size, batch_len = data.size()
         input_vecs = self.get_input_vecs(data, mask, char, char_mask)
         hidden_vecs, _, _ = model_utils.get_rnn_output(
             input_vecs, mask, self.word_encoder)
 
-        z, mean_qs, logvar_qs = \
-            self.to_latent_variable(hidden_vecs, mask, self.sampling)
+        z = self.to_latent_variable(hidden_vecs, mask, self.sampling)
 
-        mean_x = self.z2x(z)
+        # mean_x = self.z2x(z)
 
-        x = model_utils.gaussian(
-            mean_x, Variable(mean_x.data.new(1).fill_(self.expe.config.xvar)))
+        # x = model_utils.gaussian(
+        #     mean_x, Variable(mean_x.data.new(1).fill_(self.expe.config.xvar)))
 
-        x_pred = self.x2token(x)
+        # x_pred = self.x2token(x)
 
         if label is None:
             sup_loss = class_logits = None
@@ -186,11 +184,15 @@ class vsl_g(base):
                 reduce=False).view_as(data) * mask
             sup_loss = sup_loss.sum(-1) / mask.sum(-1)
 
-        log_loss = F.cross_entropy(
-            x_pred.view(batch_size * batch_len, -1),
-            data.view(-1).long(),
-            reduce=False).view_as(data) * mask
-        log_loss = log_loss.sum(-1) / mask.sum(-1)
+        # /// The only relevant loss, now is C0 = sup_loss \\\ #
+
+        # log_loss = F.cross_entropy(
+        #     x_pred.view(batch_size * batch_len, -1),
+        #     data.view(-1).long(),
+        #     reduce=False).view_as(data) * mask
+        # log_loss = log_loss.sum(-1) / mask.sum(-1)
+
+        log_loss = None
 
         # if prior_mean is not None and prior_logvar is not None:
         #     kl_div = model_utils.compute_KL_div(
@@ -202,15 +204,16 @@ class vsl_g(base):
         #     loss = log_loss + kl_temp * kl_div
         # else:
         kl_div = None
-        loss = log_loss
 
         if sup_loss is not None:
-            loss = loss + sup_loss
+            loss = sup_loss
+        else:
+            loss = 0
 
-        return loss.mean(), log_loss.mean(), \
+        return loss.mean(), \
+            log_loss.mean() if log_loss is not None else None, \
             kl_div.mean() if kl_div is not None else None, \
             sup_loss.mean() if sup_loss is not None else None, \
-            mean_qs, logvar_qs, \
             class_logits.data.cpu().numpy().argmax(-1) \
             if class_logits is not None else None
 

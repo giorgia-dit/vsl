@@ -1,0 +1,3 @@
+In order to evaluate baseline w/out autencoder (variational and non),
+run vsl_g.
+vsl_gg in this branch is unuseful.

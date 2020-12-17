@@ -24,43 +24,43 @@ def run(e):
     dp = data_utils.data_processor(experiment=e)
     data, W = dp.process()
 
-    label_logvar_buffer = \
-        train_helper.prior_buffer(data.train[0], e.config.zsize,
-                                  experiment=e,
-                                  freq=e.config.ufl,
-                                  name="label_logvar",
-                                  init_path=e.config.prior_file)
-    label_mean_buffer = \
-        train_helper.prior_buffer(data.train[0], e.config.zsize,
-                                  experiment=e,
-                                  freq=e.config.ufl,
-                                  name="label_mean",
-                                  init_path=e.config.prior_file)
+    # label_logvar_buffer = \
+    #     train_helper.prior_buffer(data.train[0], e.config.zsize,
+    #                               experiment=e,
+    #                               freq=e.config.ufl,
+    #                               name="label_logvar",
+    #                               init_path=e.config.prior_file)
+    # label_mean_buffer = \
+    #     train_helper.prior_buffer(data.train[0], e.config.zsize,
+    #                               experiment=e,
+    #                               freq=e.config.ufl,
+    #                               name="label_mean",
+    #                               init_path=e.config.prior_file)
+    #
+    # all_buffer = [label_logvar_buffer, label_mean_buffer]
+    #
+    # e.log.info("labeled buffer size: logvar: {}, mean: {}"
+    #            .format(len(label_logvar_buffer), len(label_mean_buffer)))
 
-    all_buffer = [label_logvar_buffer, label_mean_buffer]
-
-    e.log.info("labeled buffer size: logvar: {}, mean: {}"
-               .format(len(label_logvar_buffer), len(label_mean_buffer)))
-
-    if e.config.use_unlabel:
-        unlabel_logvar_buffer = \
-            train_helper.prior_buffer(data.unlabel[0], e.config.zsize,
-                                      experiment=e,
-                                      freq=e.config.ufu,
-                                      name="unlabel_logvar",
-                                      init_path=e.config.prior_file)
-        unlabel_mean_buffer = \
-            train_helper.prior_buffer(data.unlabel[0], e.config.zsize,
-                                      experiment=e,
-                                      freq=e.config.ufu,
-                                      name="unlabel_mean",
-                                      init_path=e.config.prior_file)
-
-        all_buffer += [unlabel_logvar_buffer, unlabel_mean_buffer]
-
-        e.log.info("unlabeled buffer size: logvar: {}, mean: {}"
-                   .format(len(unlabel_logvar_buffer),
-                           len(unlabel_mean_buffer)))
+    # if e.config.use_unlabel:
+    #     unlabel_logvar_buffer = \
+    #         train_helper.prior_buffer(data.unlabel[0], e.config.zsize,
+    #                                   experiment=e,
+    #                                   freq=e.config.ufu,
+    #                                   name="unlabel_logvar",
+    #                                   init_path=e.config.prior_file)
+    #     unlabel_mean_buffer = \
+    #         train_helper.prior_buffer(data.unlabel[0], e.config.zsize,
+    #                                   experiment=e,
+    #                                   freq=e.config.ufu,
+    #                                   name="unlabel_mean",
+    #                                   init_path=e.config.prior_file)
+    #
+    #     all_buffer += [unlabel_logvar_buffer, unlabel_mean_buffer]
+    #
+    #     e.log.info("unlabeled buffer size: logvar: {}, mean: {}"
+    #                .format(len(unlabel_logvar_buffer),
+    #                        len(unlabel_mean_buffer)))
 
     e.log.info("*" * 25 + " DATA PREPARATION " + "*" * 25)
     e.log.info("*" * 25 + " MODEL INITIALIZATION " + "*" * 25)
@@ -99,14 +99,14 @@ def run(e):
 
     e.log.info("Training start ...")
     label_stats = train_helper.tracker(
-        ["loss", "logloss", "sup_loss"])
-    unlabel_stats = train_helper.tracker(
-        ["loss", "logloss"])
+        ["loss", "sup_loss"])
+    # unlabel_stats = train_helper.tracker(
+    #     ["loss", "logloss"])
 
     for it in range(e.config.n_iter):
         model.train()
         # kl_temp should be in principle removed (we don't do it for computational convenience)
-        kl_temp = train_helper.get_kl_temp(e.config.klr, it, 1.0)
+        # kl_temp = train_helper.get_kl_temp(e.config.klr, it, 1.0)
 
         try:
             l_data, l_mask, l_char, l_char_mask, l_label, l_ixs = \
@@ -114,19 +114,18 @@ def run(e):
         except StopIteration:
             pass
 
-        lp_logvar = label_logvar_buffer[l_ixs]
-        lp_mean = label_mean_buffer[l_ixs]
+        # lp_logvar = label_logvar_buffer[l_ixs]
+        # lp_mean = label_mean_buffer[l_ixs]
 
-        l_loss, l_logloss, l_kld, sup_loss, lq_mean, lq_logvar, _ = \
+        l_loss, l_logloss, l_kld, sup_loss, _ = \
             model(l_data, l_mask, l_char, l_char_mask,
-                  l_label, lp_mean, lp_logvar, kl_temp)
+                  l_label)
 
-        label_logvar_buffer.update_buffer(l_ixs, lq_logvar, l_mask.sum(-1))
-        label_mean_buffer.update_buffer(l_ixs, lq_mean, l_mask.sum(-1))
+        # label_logvar_buffer.update_buffer(l_ixs, lq_logvar, l_mask.sum(-1))
+        # label_mean_buffer.update_buffer(l_ixs, lq_mean, l_mask.sum(-1))
 
         label_stats.update(
-            {"loss": l_loss, "logloss": l_logloss,
-             "sup_loss": sup_loss}, l_mask.sum())
+            {"loss": l_loss, "sup_loss": sup_loss}, l_mask.sum())
 
         if not e.config.use_unlabel:
             model.optimize(l_loss)
@@ -138,34 +137,34 @@ def run(e):
             except StopIteration:
                 pass
 
-            up_logvar = unlabel_logvar_buffer[u_ixs]
-            up_mean = unlabel_mean_buffer[u_ixs]
+            # up_logvar = unlabel_logvar_buffer[u_ixs]
+            # up_mean = unlabel_mean_buffer[u_ixs]
 
-            u_loss, u_logloss, u_kld, _, uq_mean, uq_logvar, _ = \
-                model(u_data, u_mask, u_char, u_char_mask,
-                      None, up_mean, up_logvar, kl_temp)
+            # u_loss, u_logloss, u_kld, _, uq_mean, uq_logvar, _ = \
+            #     model(u_data, u_mask, u_char, u_char_mask,
+            #           None, up_mean, up_logvar, kl_temp)
 
-            unlabel_logvar_buffer.update_buffer(
-                u_ixs, uq_logvar, u_mask.sum(-1))
-            unlabel_mean_buffer.update_buffer(
-                u_ixs, uq_mean, u_mask.sum(-1))
+            # unlabel_logvar_buffer.update_buffer(
+            #     u_ixs, uq_logvar, u_mask.sum(-1))
+            # unlabel_mean_buffer.update_buffer(
+            #     u_ixs, uq_mean, u_mask.sum(-1))
 
-            unlabel_stats.update(
-                {"loss": u_loss, "logloss": u_logloss},
-                u_mask.sum())
+            # unlabel_stats.update(
+            #     {"loss": u_loss, "logloss": u_logloss},
+            #     u_mask.sum())
 
-            model.optimize(l_loss + e.config.ur * u_loss)
+            # model.optimize(l_loss + e.config.ur * u_loss)
 
         if (it + 1) % e.config.print_every == 0:
             summary = label_stats.summarize(
-                "it: {} (max: {}), kl_temp: {:.2f}, labeled".format(
-                    it + 1, len(label_batch), kl_temp))
+                "it: {} (max: {}), labeled".format(
+                    it + 1, len(label_batch)))
             if e.config.use_unlabel:
                 summary += unlabel_stats.summarize(", unlabeled")
             e.log.info(summary)
             if e.config.summarize:
                 writer.add_scalar(
-                    "label/kl_temp", kl_temp, it)
+                    "label", it)
                 for name, value in label_stats.stats.items():
                     writer.add_scalar(
                         "label/" + name, value, it)
@@ -174,7 +173,7 @@ def run(e):
                         writer.add_scalar(
                             "unlabel/" + name, value, it)
             label_stats.reset()
-            unlabel_stats.reset()
+            # unlabel_stats.reset()
         if (it + 1) % e.config.eval_every == 0:
 
             e.log.info("*" * 25 + " DEV SET EVALUATION " + "*" * 25)
@@ -202,9 +201,9 @@ def run(e):
                     test_perf=test_perf,
                     iteration=it)
 
-                if e.config.save_prior:
-                    for buf in all_buffer:
-                        buf.save()
+                # if e.config.save_prior:
+                #     for buf in all_buffer:
+                #         buf.save()
 
                 if e.config.summarize:
                     writer.add_scalar(
@@ -216,11 +215,11 @@ def run(e):
                        "test result: {:.4f}, "
                        .format(best_dev_res, test_res))
             label_stats.reset()
-            unlabel_stats.reset()
+            # unlabel_stats.reset()
             
 
 def my_args():
-    file = 'it_isdt-ud-'  # {'' (evalita), 'it_isdt-ud-', 'it_postwita-ud-', 'fr-ud-'}
+    file = 'it_postwita-ud-'  # {'' (evalita), 'it_isdt-ud-', 'it_postwita-ud-', 'fr-ud-'}
     data_group = 'ud'  # {ud, evalita}
     today = datetime.today().strftime('%Y-%m-%d-%H:%M:%S')
     output_dir = 'output_' + today
@@ -234,7 +233,7 @@ def my_args():
     args.data_file = f"./input/preprocessed/{file}pproc.{data_group}"
     args.debug = True
     args.edim = 768
-    args.embed_file = f"./input/word_vectors_{file}pproc.{data_group}"
+    args.embed_file = f"./input/word_vectors_{file}pproc.{data_group}" # or None
     args.embed_type = 'bert'
     args.eval_every = 10000  # FIX: 10000 (2)
     args.f1_score = False
@@ -269,7 +268,7 @@ def my_args():
     args.vocab_size = 100000
     args.xvar = 0.001
     args.ysize = 25
-    args.zsize = 100  # authors value: 50
+    args.zsize = 50  # authors value: 50
     return args
 
 

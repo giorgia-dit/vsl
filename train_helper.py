@@ -323,7 +323,7 @@ class evaluator:
 
     def evaluate(self, data):
         self.model.eval()
-        eval_stats = tracker(["log_loss"])
+        eval_stats = tracker(["sup_loss"])
         if self.expe.config.f1_score:
             reporter = f1_reporter(self.inv_tag_vocab)
         else:
@@ -337,12 +337,12 @@ class evaluator:
                 batch_size=self.expe.config.batch_size,
                 shuffle=False):
             outputs = self.model(data, mask, char, char_mask,
-                                 label, None, None, 1.0)
-            pred, log_loss = outputs[-1], outputs[1]
+                                 label)
+            pred = outputs[-1]
             reporter.update(pred, label, mask)
 
-            eval_stats.update(
-                {"log_loss": log_loss}, mask.sum())
+            # eval_stats.update(
+            #     {"log_loss": log_loss}, mask.sum())
         perf, res = reporter.report()
         summary = eval_stats.summarize(
             ", ".join([x[0] + ": {:.5f}".format(x[1])
