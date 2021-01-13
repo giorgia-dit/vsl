@@ -269,9 +269,23 @@ def run(e):
 
 
 def my_args():
-    file = 'it_isdt-ud-'  # {'' (evalita), 'it_isdt-ud-', 'it_postwita-ud-', 'fr-ud-'}
+    file = 'it_postwita-ud-'  # {'' (evalita), 'it_isdt-ud-', 'it_postwita-ud-', 'fr-ud-'}
     data_group = 'ud'  # {ud, evalita}
-    model = 'flat'
+    lab_ratio = 1.0
+    unlab_ratio = None
+
+    data_file_path = f"./input/preprocessed/{file}pproc"
+    embed_file_path = f"./input/word_vectors_{file}pproc"
+    if lab_ratio != 1.0:
+        data_file_path += f"_l{str(lab_ratio)[-1]}"
+        embed_file_path += f"_l{str(lab_ratio)[-1]}"
+    if unlab_ratio:
+        data_file_path += f"_ul{str(unlab_ratio)[-1]}"
+        embed_file_path += f"_ul{str(unlab_ratio)[-1]}"
+    data_file_path += f".{data_group}"
+    embed_file_path += f".{data_group}"
+
+    model = 'hier'
     today = datetime.today().strftime('%Y-%m-%d-%H:%M:%S')
     output_dir = 'output_' + today
 
@@ -281,10 +295,10 @@ def my_args():
     args.cdim = 50
     args.char_vocab_size = 300
     args.chsize = 100
-    args.data_file = f"./input/preprocessed/{file}pproc.{data_group}"
+    args.data_file = data_file_path
     args.debug = True
     args.edim = 768
-    args.embed_file = f"./input/word_vectors_{file}pproc.{data_group}"
+    args.embed_file = None  # embed_file_path
     args.embed_type = 'bert'
     args.eval_every = 10000 # FIX: 10000 (2)
     args.f1_score = False
@@ -311,15 +325,15 @@ def my_args():
     args.ufl = 1
     args.ufu = 1
     args.unlabel_batch_size = 10
-    args.unlabel_file = None
+    args.unlabel_file = f"./input/preprocessed/unlabel.twita"  # f"./input/preprocessed/unlabel.twita/coris" / NONE
     args.ur = 0.1
     args.use_cuda = False
-    args.use_unlabel = False
+    args.use_unlabel = True
     args.vocab_file = f"./{output_dir}/{file}vocab"
     args.vocab_size = 100000
     args.xvar = 0.001
-    args.ysize = 25
-    args.zsize = 50
+    args.ysize = 100
+    args.zsize = 200
 
     return args
 

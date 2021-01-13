@@ -52,14 +52,16 @@ class data_processor:
         unlabeled_data = None
 
         if self.expe.config.use_unlabel:
-            if self.expe.config.embed_type == 'ud' or self.expe.config.embed_type == 'bert':
-                unlabeled_data = dataset['unlabel'][0]
 
-                # FIX
-                # unlabeled_data = unlabeled_data[:3]
-
+            if self.expe.config.unlabel_file:
+                with open(self.expe.config.unlabel_file, "rb+") as infile:
+                    unlabeled_data = pickle.load(infile)
             else:
-                unlabeled_data = self._load_sent(self.expe.config.unlabel_file)
+                if self.expe.config.embed_type == 'ud' or self.expe.config.embed_type == 'bert':
+                    unlabeled_data = dataset['unlabel'][0]
+
+            # TODO FIX
+            # unlabeled_data = unlabeled_data[:3]
 
             train_v_data = train_data[0] + unlabeled_data
 
@@ -204,7 +206,7 @@ class data_processor:
 
     def _unlabel_to_idx(self, sentences, vocab, char_vocab, n_words):
         zero_ind = n_words['label'] + 1
-        partition_range = list(range(zero_ind, zero_ind + n_words['label'] + 1))
+        partition_range = list(range(zero_ind, zero_ind + n_words['unlabel']))
 
         sentence_holder = []
         sent_char_holder = []

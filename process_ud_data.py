@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split
 
 
 def my_args():
-    file = 'it_isdt-ud-'
+    file = 'it_postwita-ud-'
     output_dir = 'input/preprocessed'
 
     args = argparse.Namespace()
@@ -72,24 +72,26 @@ if __name__ == "__main__":
     args = my_args()
     logging.info("##### training data #####")
     all_sents, all_tags = load_data(args.train)
+
+    filtered_sents = []
+    filtered_tags = []
+
+    for sent, tag in zip(all_sents, all_tags):
+        if len(sent) <= 80:
+            filtered_sents.append(sent)
+            filtered_tags.append(tag)
+    all_sents = filtered_sents
+    all_tags = filtered_tags
+
     logging.info("random splitting training data with ratio of {}..."
                  .format(args.labratio))
+
     if args.labratio == 1.0:
         train_sents, unlabel_sents, train_tags, unlabel_tags = all_sents, [], all_tags, []
     else:
         train_sents, unlabel_sents, train_tags, unlabel_tags = \
             train_test_split(all_sents, all_tags,
                              train_size=args.labratio, test_size=args.unlabratio, shuffle=True)
-
-    filtered_train_sents = []
-    filtered_train_tags = []
-
-    for sent, tag in zip(train_sents, train_tags):
-        if len(sent) <= 80:
-            filtered_train_sents.append(sent)
-            filtered_train_tags.append(tag)
-    train_sents = filtered_train_sents
-    train_tags = filtered_train_tags
 
     logging.info("#train sents: {}, #train words: {}, #train tags: {}"
                  .format(len(train_sents), len(sum(train_sents, [])),
@@ -107,6 +109,10 @@ if __name__ == "__main__":
                  .format(len(test_sents), len(sum(test_sents, [])),
                          len(sum(test_tags, []))))
     output = "data" if args.output is None else args.output
+    if args.labratio != 1.0:
+        output += f"_l{str(args.labratio)[-1]}"
+    if args.unlabratio:
+        output += f"_ul{str(args.unlabratio)[-1]}"
     output += ".ud"
 
     tag_set = set(sum([sum(d, []) for d in [all_tags, dev_tags, test_tags]],
