@@ -14,7 +14,7 @@ def my_args():
     args.train = "./input/train_valid.txt"
     args.test = "./input/test.txt"
     args.labratio = 0.2
-    args.unlabratio = 0.5
+    args.unlabratio = None
     return args
 
 def get_args():

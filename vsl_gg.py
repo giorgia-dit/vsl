@@ -269,10 +269,10 @@ def run(e):
 
 
 def my_args():
-    file = 'it_postwita-ud-'  # {'' (evalita), 'it_isdt-ud-', 'it_postwita-ud-', 'fr-ud-'}
-    data_group = 'ud'  # {ud, evalita}
-    lab_ratio = 1.0
-    unlab_ratio = None
+    file = ''  # {'' (evalita), 'it_isdt-ud-', 'it_postwita-ud-', 'fr-ud-'}
+    data_group = 'evalita'  # {ud, evalita}
+    lab_ratio = 0.2
+    unlab_ratio = 0.8
 
     data_file_path = f"./input/preprocessed/{file}pproc"
     embed_file_path = f"./input/word_vectors_{file}pproc"
@@ -300,7 +300,7 @@ def my_args():
     args.edim = 768
     args.embed_file = None  # embed_file_path
     args.embed_type = 'bert'
-    args.eval_every = 10000 # FIX: 10000 (2)
+    args.eval_every = 10000  # FIX: 10000 (2)
     args.f1_score = False
     args.grad_clip = 10.0
     args.klr = 0.0001
@@ -312,9 +312,9 @@ def my_args():
     args.n_iter = 30000  # FIX: 30000 (10)
     args.opt = f"adam"
     args.prefix = None
-    args.print_every = 5000 # FIX: 5000 (2)
+    args.print_every = 5000  # FIX: 5000 (2)
     args.prior_file = f"./{output_dir}/test_gg_{model}"
-    args.random_seed = 15  # {0, 1, 15, 16, 17}
+    args.random_seed = 2  # {0, 1, 15, 16, 17}
     args.rsize = 500  # authors value: 100
     args.rtype = f"gru"
     args.save_prior = True
@@ -325,8 +325,8 @@ def my_args():
     args.ufl = 1
     args.ufu = 1
     args.unlabel_batch_size = 10
-    args.unlabel_file = f"./input/preprocessed/unlabel.twita"  # f"./input/preprocessed/unlabel.twita/coris" / NONE
-    args.ur = 0.1
+    args.unlabel_file = None  # unlabel.twita / .coris_29 (isdt) / .coris_13 (evalita) / NONE
+    args.ur = 0.5  # default: 0.1
     args.use_cuda = False
     args.use_unlabel = True
     args.vocab_file = f"./{output_dir}/{file}vocab"

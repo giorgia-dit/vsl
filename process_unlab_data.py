@@ -13,12 +13,12 @@ def char_is_emoji(character):
 
 from sklearn.model_selection import train_test_split
 
-# {1.0 isdt = 0.027 coris; 1.0 evalita = 0.015 coris; 1.0 postwita = 0.028}
+# {1.0 isdt = 0.029 coris; 1.0 evalita = 0.013 coris; 1.0 postwita = 0.017}
 
 def my_args():
     args = argparse.Namespace()
-    args.set = 'twita'  # {'coris', 'twita'}
-    args.ratio = 0.028
+    args.set = 'coris'  # {'coris', 'twita'}
+    args.ratio = 0.013
     return args
 
 def get_args():
@@ -86,12 +86,13 @@ if __name__ == "__main__":
     train, unlabel = \
             train_test_split(unlabel_sents, test_size=args.ratio, shuffle=True)
 
-
     logging.info("#unlabel: {}".format(len(unlabel)))
-    count = 0
-    for s in unlabel:
-        count += len(s)
-    print(count)
+
+    output = f"./input/preprocessed/unlabel.{args.set}"
+    if args.set == 'coris':
+        output += f"_{str(args.ratio)[-2:]}"
 
     pickle.dump(
-        unlabel, open(f"./input/preprocessed/unlabel.{args.set}", "wb+"), protocol=-1)
+        unlabel, open(output, "wb+"), protocol=-1)
+
+    logging.info("data saved to {}".format(output))

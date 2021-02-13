@@ -113,9 +113,10 @@ class base(nn.Module):
         torch.save(checkpoint, save_path)
         self.expe.log.info("model saved to {}".format(save_path))
 
-    def load(self, checkpointed_state_dict=None):
+    def load(self, checkpointed_state_dict=None, save_path=None):
         if checkpointed_state_dict is None:
-            save_path = os.path.join(self.expe.experiment_dir, "model.ckpt")
+            if not save_path:
+                save_path = os.path.join(self.expe.experiment_dir, "model.ckpt")
             checkpoint = torch.load(save_path,
                                     map_location=lambda storage,
                                     loc: storage)
