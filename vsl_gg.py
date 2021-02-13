@@ -314,7 +314,7 @@ def my_args():
     args.prefix = None
     args.print_every = 5000  # FIX: 5000 (2)
     args.prior_file = f"./{output_dir}/test_gg_{model}"
-    args.random_seed = 0  # {0, 1, 15, 16, 17}
+    args.random_seed = 17  # {0, 1, 15, 16, 17}
     args.rsize = 500  # authors value: 100
     args.rtype = f"gru"
     args.save_prior = True
