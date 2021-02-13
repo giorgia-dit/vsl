@@ -269,9 +269,9 @@ def run(e):
 
 
 def my_args():
-    file = 'it_isdt-ud-'  # {'' (evalita), 'it_isdt-ud-', 'it_postwita-ud-', 'fr-ud-'}
+    file = 'it_postwita-ud-'  # {'' (evalita), 'it_isdt-ud-', 'it_postwita-ud-', 'fr-ud-'}
     data_group = 'ud'  # {ud, evalita}
-    lab_ratio = 1.0
+    lab_ratio = 0.2
     unlab_ratio = None
 
     data_file_path = f"./input/preprocessed/{file}pproc"
@@ -314,7 +314,7 @@ def my_args():
     args.prefix = None
     args.print_every = 5000  # FIX: 5000 (2)
     args.prior_file = f"./{output_dir}/test_gg_{model}"
-    args.random_seed = 17  # {0, 1, 15, 16, 17}
+    args.random_seed = 0  # {0, 1, 15, 16, 17}
     args.rsize = 500  # authors value: 100
     args.rtype = f"gru"
     args.save_prior = True
@@ -325,10 +325,10 @@ def my_args():
     args.ufl = 1
     args.ufu = 1
     args.unlabel_batch_size = 10
-    args.unlabel_file = f"./input/preprocessed/unlabel.coris_29"  # unlabel.twita / .coris_29 (isdt) / .coris_13 (evalita) / NONE
+    args.unlabel_file = None # f"./input/preprocessed/unlabel.coris_29"  # unlabel.twita / .coris_29 (isdt) / .coris_13 (evalita) / NONE
     args.ur = 0.5  # default: 0.1
     args.use_cuda = False
-    args.use_unlabel = True
+    args.use_unlabel = False
     args.vocab_file = f"./{output_dir}/{file}vocab"
     args.vocab_size = 100000
     args.xvar = 0.001
