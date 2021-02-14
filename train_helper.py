@@ -321,7 +321,7 @@ class evaluator:
     def __init__(self, inv_tag_vocab, model, experiment):
         self.expe = experiment
 
-    def evaluate(self, data):
+    def evaluate(self, data, eval_flag):
         self.model.eval()
         eval_stats = tracker(["log_loss"])
         if self.expe.config.f1_score:
@@ -340,6 +340,20 @@ class evaluator:
                                  label, None, None, 1.0)
             pred, log_loss = outputs[-1], outputs[1]
             reporter.update(pred, label, mask)
+
+            if eval_flag == 'test':
+                temp_a = ((label != pred) * mask)
+                temp_b = np.where(temp_a == 1)
+                temp_c = list(zip(temp_b[0], temp_b[1]))
+                mm_ind = [(pred[i][j], label[i][j]) for (i,j) in temp_c]
+                mm_verbose = [(self.inv_tag_vocab[p], self.inv_tag_vocab[l]) for (p,l) in mm_ind]
+
+                res = "\n".join([str(t) for t in mm_verbose])
+                log_mm = f"Here are the wrong predictions made: \n" \
+                     f"[couples are made in this fashion: 1) prediction, 2) label]" \
+                     f"{res}"
+
+                self.expe.log.info(log_mm)
 
             eval_stats.update(
                 {"log_loss": log_loss}, mask.sum())
