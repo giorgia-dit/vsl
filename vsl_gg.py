@@ -269,7 +269,7 @@ def run(e):
 
 
 def my_args():
-    file = 'it_isdt-ud-'  # {'' (evalita), 'it_isdt-ud-', 'it_postwita-ud-', 'fr-ud-'}
+    file = 'it_postwita-ud-'  # {'' (evalita), 'it_isdt-ud-', 'it_postwita-ud-', 'fr-ud-'}
     data_group = 'ud'  # {ud, evalita}
     lab_ratio = 1.0
     unlab_ratio = None
@@ -325,7 +325,7 @@ def my_args():
     args.ufl = 1
     args.ufu = 1
     args.unlabel_batch_size = 10
-    args.unlabel_file = f"./input/preprocessed/unlabel.coris_58"  # unlabel.twita / .coris_29 (isdt) / .coris_13 (evalita) / NONE
+    args.unlabel_file = f"./input/preprocessed/unlabel.twita"  # unlabel.twita / .coris_29 (isdt) / .coris_13 (evalita) / NONE
     args.ur = 0.5  # default: 0.1
     args.use_cuda = False
     args.use_unlabel = True
