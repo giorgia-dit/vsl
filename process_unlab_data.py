@@ -17,8 +17,8 @@ from sklearn.model_selection import train_test_split
 
 def my_args():
     args = argparse.Namespace()
-    args.set = 'twita'  # {'coris', 'twita'}
-    args.ratio = 0.017
+    args.set = 'coris'  # {'coris', 'twita'}
+    args.ratio = 0.013
     return args
 
 def get_args():
