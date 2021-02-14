@@ -18,7 +18,7 @@ def my_args():
     args.test = f"./input/{file}test.conllu"
     args.output = f"./{output_dir}/{file}pproc"
     args.labratio = 0.2
-    args.unlabratio = 0.5
+    args.unlabratio = 0.8
     return args
 
 
