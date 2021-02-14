@@ -275,7 +275,7 @@ def my_args():
     args.unlabel_file = None
     args.ur = 0.5
     args.use_cuda = False
-    args.use_unlabel = True
+    args.use_unlabel = False
     args.vocab_file = f"./{output_dir}/{file}vocab"
     args.vocab_size = 100000
     args.xvar = 0.001
