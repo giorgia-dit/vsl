@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import pickle
 import argparse
 import logging
@@ -15,8 +17,8 @@ def my_args():
     args.dev = f"./input/{file}dev.conllu"
     args.test = f"./input/{file}test.conllu"
     args.output = f"./{output_dir}/{file}pproc"
-    args.labratio = 0.2
-    args.unlabratio = 0.5
+    args.labratio = 1.0
+    args.unlabratio = None
     return args
 
 
