@@ -6,7 +6,7 @@ from sklearn.model_selection import train_test_split
 
 
 def my_args():
-    file = 'it_isdt-ud-'
+    file = 'it_postwita-ud-'
     output_dir = 'input/preprocessed'
 
     args = argparse.Namespace()
