@@ -13,7 +13,7 @@ def my_args():
 
     args.train = "./input/train_valid.txt"
     args.test = "./input/test.txt"
-    args.labratio = 1.0
+    args.labratio = 0.2
     args.unlabratio = None
     return args
 
