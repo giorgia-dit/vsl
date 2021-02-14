@@ -1,0 +1,119 @@
+02-14 06:58 INFO: ************************* ARGS *************************
+02-14 06:58 INFO: Namespace(batch_size=10, cdim=50, char_vocab_size=300, chsize=100, data_file='./input/preprocessed/pproc_l2_ul5.evalita', debug=True, edim=768, embed_file=None, embed_type='bert', eval_every=10000, f1_score=False, grad_clip=10.0, klr=0.0001, l2=0.0, lr=0.001, mhsize=500, mlayer=2, model='hier', n_iter=30000, opt='adam', prefix=None, print_every=5000, prior_file='./output_2021-02-14-06:58:56/test_gg_hier', random_seed=0, rsize=500, rtype='gru', save_prior=True, summarize=True, tag_file='./input/preprocessed/evalita_tagfile', train_emb=False, tw=True, ufl=1, ufu=1, unlabel_batch_size=10, unlabel_file=None, ur=0.5, use_cuda=True, use_unlabel=True, vocab_file='./output_2021-02-14-06:58:56/vocab', vocab_size=100000, xvar=0.001, ysize=100, zsize=200)
+02-14 06:58 INFO: ************************* ARGS *************************
+02-14 06:58 INFO: ************************* DATA PREPARATION *************************
+02-14 06:58 INFO: loading data from ./input/preprocessed/pproc_l2_ul5.evalita ...
+02-14 06:58 DEBUG: Starting new HTTPS connection (1): huggingface.co:443
+02-14 06:58 DEBUG: https://huggingface.co:443 "HEAD /Musixmatch/umberto-commoncrawl-cased-v1/resolve/main/config.json HTTP/1.1" 200 0
+02-14 06:58 DEBUG: Starting new HTTPS connection (1): huggingface.co:443
+02-14 06:58 DEBUG: https://huggingface.co:443 "HEAD /Musixmatch/umberto-commoncrawl-cased-v1/resolve/main/config.json HTTP/1.1" 200 0
+02-14 06:58 DEBUG: Starting new HTTPS connection (1): huggingface.co:443
+02-14 06:58 DEBUG: https://huggingface.co:443 "HEAD /Musixmatch/umberto-commoncrawl-cased-v1/resolve/main/sentencepiece.bpe.model HTTP/1.1" 200 0
+02-14 06:58 DEBUG: Starting new HTTPS connection (1): huggingface.co:443
+02-14 06:58 DEBUG: https://huggingface.co:443 "HEAD /Musixmatch/umberto-commoncrawl-cased-v1/resolve/main/added_tokens.json HTTP/1.1" 404 0
+02-14 06:58 DEBUG: Starting new HTTPS connection (1): huggingface.co:443
+02-14 06:58 DEBUG: https://huggingface.co:443 "HEAD /Musixmatch/umberto-commoncrawl-cased-v1/resolve/main/special_tokens_map.json HTTP/1.1" 404 0
+02-14 06:58 DEBUG: Starting new HTTPS connection (1): huggingface.co:443
+02-14 06:58 DEBUG: https://huggingface.co:443 "HEAD /Musixmatch/umberto-commoncrawl-cased-v1/resolve/main/tokenizer_config.json HTTP/1.1" 404 0
+02-14 06:58 DEBUG: Starting new HTTPS connection (1): huggingface.co:443
+02-14 06:58 DEBUG: https://huggingface.co:443 "HEAD /Musixmatch/umberto-commoncrawl-cased-v1/resolve/main/tokenizer.json HTTP/1.1" 200 0
+02-14 06:58 DEBUG: Starting new HTTPS connection (1): huggingface.co:443
+02-14 06:58 DEBUG: https://huggingface.co:443 "HEAD /Musixmatch/umberto-commoncrawl-cased-v1/resolve/main/pytorch_model.bin HTTP/1.1" 302 0
+02-14 07:00 INFO: vocab file not exist, start building
+02-14 07:00 INFO: #Chars: 96
+02-14 07:00 INFO: ('e', 41114)
+02-14 07:00 INFO: ('a', 40956)
+02-14 07:00 INFO: ('i', 40510)
+02-14 07:00 INFO: ('o', 32879)
+02-14 07:00 INFO: ('n', 26319)
+02-14 07:00 INFO: ...
+02-14 07:00 INFO: ('&', 2)
+02-14 07:00 INFO: ('Ì', 1)
+02-14 07:00 INFO: ('Ò', 1)
+02-14 07:00 INFO: ('/', 1)
+02-14 07:00 INFO: ('À', 1)
+02-14 07:00 INFO: char vocab size: 97
+02-14 07:00 INFO: Words are initialized with loaded embeddings.
+02-14 07:00 INFO: saving to ./output_2021-02-14-06:58:56/vocab/vocab_100000
+02-14 07:00 INFO: loading tags from ./input/preprocessed/evalita_tagfile
+02-14 07:00 INFO: tag vocab size: 32
+02-14 07:00 INFO: #sent: 965
+02-14 07:00 INFO: #word: 24650
+02-14 07:00 INFO: #tag: 24650
+02-14 07:00 INFO: #sent: 537
+02-14 07:00 INFO: #word: 13126
+02-14 07:00 INFO: #tag: 13126
+02-14 07:00 INFO: #sent: 670
+02-14 07:00 INFO: #word: 17313
+02-14 07:00 INFO: #tag: 17313
+02-14 07:00 INFO: #train data: 965, max len: 112, min len: 1, avg len: 25.54
+02-14 07:00 INFO: #unk in train sentences: (0, 24650, 0.0)
+02-14 07:00 INFO: #dev data: 537, max len: 123, min len: 3, avg len: 24.44
+02-14 07:00 INFO: #unk in dev sentences: (0, 13126, 0.0)
+02-14 07:00 INFO: #test data: 670, max len: 145, min len: 1, avg len: 25.84
+02-14 07:00 INFO: #unk in test sentences: (0, 17313, 0.0)
+02-14 07:00 INFO: #sent: 2413
+02-14 07:00 INFO: #unlabeled data: 2413, max len: 118, min len: 1, avg len: 24.84
+02-14 07:00 INFO: #unk in unlabeled sentences: (0, 59947, 0.0)
+02-14 07:00 INFO: labeled buffer size: logvar1: 965, mean1: 965, logvar2: 965, mean2: 965
+02-14 07:00 INFO: unlabeled buffer size: logvar1: 2413, mean1: 2413, logvar2: 2413, mean2: 2413
+02-14 07:00 INFO: ************************* DATA PREPARATION *************************
+02-14 07:00 INFO: ************************* MODEL INITIALIZATION *************************
+02-14 07:00 INFO: Initialized with pretrained word embedding
+02-14 07:00 INFO: Word Embedding not trainable
+02-14 07:00 INFO: transferred model to gpu
+02-14 07:00 INFO: vsl_gg(
+  (char_encoder): char_rnn(
+    (char_embed): Embedding(97, 50)
+    (char_cell): GRU(50, 100, batch_first=True, bidirectional=True)
+  )
+  (word_embed): Embedding(115037, 768)
+  (word_encoder): GRU(968, 500, batch_first=True, bidirectional=True)
+  (x2token): Linear(in_features=768, out_features=115037, bias=False)
+  (to_latent_variable): gaussian_hier_layer(
+    (q_mean2_mlp): Linear(in_features=1000, out_features=100, bias=True)
+    (q_logvar2_mlp): Linear(in_features=1000, out_features=100, bias=True)
+    (q_mean_mlp): Linear(in_features=1100, out_features=200, bias=True)
+    (q_logvar_mlp): Linear(in_features=1100, out_features=200, bias=True)
+  )
+  (classifier): Linear(in_features=100, out_features=32, bias=True)
+  (yz2x): Sequential(
+    (0): Linear(in_features=200, out_features=500, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=500, out_features=500, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=500, out_features=768, bias=True)
+  )
+)
+02-14 07:00 INFO: ************************* MODEL INITIALIZATION *************************
+02-14 07:00 INFO: Training start ...
+02-14 07:11 INFO: it: 5000 (max: 97), kl_temp: 0.65, labeled, loss: 1.352, logloss: 0.683, kl_div: 6.724, sup_loss: 0.096, elapsed time: 639.8(s), unlabeled, loss: 1.599, logloss: 0.904, kl_div: 10.418, elapsed time: 639.8(s)
+02-14 07:21 INFO: it: 10000 (max: 97), kl_temp: 1.00, labeled, loss: 0.716, logloss: 0.053, kl_div: 0.718, sup_loss: 0.012, elapsed time: 645.1(s), unlabeled, loss: 0.777, logloss: 0.167, kl_div: 0.672, elapsed time: 645.1(s)
+02-14 07:21 INFO: ************************* DEV SET EVALUATION *************************
+02-14 07:21 INFO: acc: 0.97227, f1: 0.00000, prec: 0.00000, rec: 0.00000, log_loss: 0.371, elapsed time: 1.4(s)
+02-14 07:21 INFO: ************************* DEV SET EVALUATION *************************
+02-14 07:21 INFO: ************************* TEST SET EVALUATION *************************
+02-14 07:21 INFO: acc: 0.97666, f1: 0.00000, prec: 0.00000, rec: 0.00000, log_loss: 0.344, elapsed time: 1.8(s)
+02-14 07:21 INFO: ************************* TEST SET EVALUATION *************************
+02-14 07:22 INFO: model saved to ./output_2021-02-14-06:58:56/model.ckpt
+02-14 07:22 INFO: prior saved to: ./output_2021-02-14-06:58:56/test_gg_hier/label_logvar1_200
+02-14 07:22 INFO: prior saved to: ./output_2021-02-14-06:58:56/test_gg_hier/label_mean1_200
+02-14 07:22 INFO: prior saved to: ./output_2021-02-14-06:58:56/test_gg_hier/label_logvar2_100
+02-14 07:22 INFO: prior saved to: ./output_2021-02-14-06:58:56/test_gg_hier/label_mean2_100
+02-14 07:22 INFO: prior saved to: ./output_2021-02-14-06:58:56/test_gg_hier/unlabel_logvar1_200
+02-14 07:22 INFO: prior saved to: ./output_2021-02-14-06:58:56/test_gg_hier/unlabel_mean1_200
+02-14 07:22 INFO: prior saved to: ./output_2021-02-14-06:58:56/test_gg_hier/unlabel_logvar2_100
+02-14 07:22 INFO: prior saved to: ./output_2021-02-14-06:58:56/test_gg_hier/unlabel_mean2_100
+02-14 07:22 INFO: best dev result: 0.9723, test result: 0.9767, 
+02-14 07:32 INFO: it: 15000 (max: 97), kl_temp: 1.00, labeled, loss: 0.536, logloss: 0.038, kl_div: 0.489, sup_loss: 0.008, elapsed time: 644.3(s), unlabeled, loss: 0.584, logloss: 0.119, kl_div: 0.465, elapsed time: 644.3(s)
+02-14 07:43 INFO: it: 20000 (max: 97), kl_temp: 1.00, labeled, loss: 0.504, logloss: 0.039, kl_div: 0.459, sup_loss: 0.007, elapsed time: 646.6(s), unlabeled, loss: 0.546, logloss: 0.106, kl_div: 0.440, elapsed time: 646.6(s)
+02-14 07:43 INFO: ************************* DEV SET EVALUATION *************************
+02-14 07:43 INFO: acc: 0.97166, f1: 0.00000, prec: 0.00000, rec: 0.00000, log_loss: 0.383, elapsed time: 1.4(s)
+02-14 07:43 INFO: ************************* DEV SET EVALUATION *************************
+02-14 07:43 INFO: best dev result: 0.9723, test result: 0.9767, 
+02-14 07:54 INFO: it: 25000 (max: 97), kl_temp: 1.00, labeled, loss: 0.431, logloss: 0.034, kl_div: 0.392, sup_loss: 0.006, elapsed time: 647.1(s), unlabeled, loss: 0.468, logloss: 0.089, kl_div: 0.378, elapsed time: 647.1(s)
+02-14 08:04 INFO: it: 30000 (max: 97), kl_temp: 1.00, labeled, loss: 0.435, logloss: 0.034, kl_div: 0.396, sup_loss: 0.005, elapsed time: 628.8(s), unlabeled, loss: 0.469, logloss: 0.087, kl_div: 0.382, elapsed time: 628.8(s)
+02-14 08:04 INFO: ************************* DEV SET EVALUATION *************************
+02-14 08:04 INFO: acc: 0.97227, f1: 0.00000, prec: 0.00000, rec: 0.00000, log_loss: 0.577, elapsed time: 1.4(s)
+02-14 08:04 INFO: ************************* DEV SET EVALUATION *************************
+02-14 08:04 INFO: best dev result: 0.9723, test result: 0.9767, 
