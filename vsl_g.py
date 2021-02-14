@@ -273,7 +273,7 @@ def my_args():
     args.ufu = 1
     args.unlabel_batch_size = 10
     args.unlabel_file = None
-    args.ur = 0.1
+    args.ur = 0.5
     args.use_cuda = False
     args.use_unlabel = True
     args.vocab_file = f"./{output_dir}/{file}vocab"

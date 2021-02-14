@@ -283,7 +283,7 @@ def my_args():
         data_file_path += f"_ul{str(unlab_ratio)[-1]}"
     data_file_path += f".{data_group}"
 
-    model = 'hier'
+    model = 'flat'
     today = datetime.today().strftime('%Y-%m-%d-%H:%M:%S')
     output_dir = 'output_' + today
 
@@ -324,7 +324,7 @@ def my_args():
     args.ufu = 1
     args.unlabel_batch_size = 10
     args.unlabel_file = None
-    args.ur = 0.1
+    args.ur = 0.5
     args.use_cuda = False
     args.use_unlabel = True
     args.vocab_file = f"./{output_dir}/{file}vocab"
