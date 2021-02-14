@@ -272,7 +272,7 @@ def my_args():
     file = ''  # {'' (evalita), 'it_isdt-ud-', 'it_postwita-ud-', 'fr-ud-'}
     data_group = 'evalita'  # {ud, evalita}
     lab_ratio = 0.2
-    unlab_ratio = 0.5
+    unlab_ratio = 0.8
 
     data_file_path = f"./input/preprocessed/{file}pproc"
     embed_file_path = f"./input/word_vectors_{file}pproc"
@@ -326,7 +326,7 @@ def my_args():
     args.ufu = 1
     args.unlabel_batch_size = 10
     args.unlabel_file = None  # unlabel.twita / .coris_29 (isdt) / .coris_13 (evalita) / NONE
-    args.ur = 0.5  # default: 0.1
+    args.ur = 0.8  # default: 0.1
     args.use_cuda = False
     args.use_unlabel = True
     args.vocab_file = f"./{output_dir}/{file}vocab"
