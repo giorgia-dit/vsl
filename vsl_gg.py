@@ -272,7 +272,7 @@ def my_args():
     file = ''  # {'' (evalita), 'it_isdt-ud-', 'it_postwita-ud-', 'fr-ud-'}
     data_group = 'evalita'
     lab_ratio = 0.2
-    unlab_ratio = None
+    unlab_ratio = 0.8
 
     data_file_path = f"./input/preprocessed/{file}pproc"
     embed_file_path = f"./input/word_vectors_{file}pproc"
@@ -283,7 +283,7 @@ def my_args():
         data_file_path += f"_ul{str(unlab_ratio)[-1]}"
     data_file_path += f".{data_group}"
 
-    model = 'flat'
+    model = 'hier'
     today = datetime.today().strftime('%Y-%m-%d-%H:%M:%S')
     output_dir = 'output_' + today
 
