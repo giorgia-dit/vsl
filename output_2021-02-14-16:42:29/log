@@ -1,0 +1,107 @@
+02-14 16:42 INFO: ************************* ARGS *************************
+02-14 16:42 INFO: Namespace(batch_size=10, cdim=50, char_vocab_size=300, chsize=100, data_file='./input/preprocessed/it_isdt-ud-pproc.ud', debug=True, edim=100, embed_file='./input/it.bin', embed_type='ud', eval_every=10000, f1_score=False, grad_clip=10.0, klr=0.0001, l2=0.0, lr=0.001, mhsize=100, mlayer=2, model='g', n_iter=30000, opt='adam', prefix=None, print_every=5000, prior_file='./output_2021-02-14-16:42:29/test_g', random_seed=0, rsize=100, rtype='gru', save_prior=True, summarize=True, tag_file='./input/preprocessed/ud_tagfile', train_emb=False, tw=True, ufl=1, ufu=1, unlabel_batch_size=10, unlabel_file=None, ur=0.5, use_cuda=True, use_unlabel=False, vocab_file='./output_2021-02-14-16:42:29/it_isdt-ud-vocab', vocab_size=100000, xvar=0.001, ysize=25, zsize=50)
+02-14 16:42 INFO: ************************* ARGS *************************
+02-14 16:42 INFO: ************************* DATA PREPARATION *************************
+02-14 16:42 INFO: loading data from ./input/preprocessed/it_isdt-ud-pproc.ud ...
+02-14 16:42 INFO: loading embedding file from ./input/it.bin
+02-14 16:42 INFO: loading projection weights from ./input/it.bin
+02-14 16:42 DEBUG: {'uri': './input/it.bin', 'mode': 'rb', 'buffering': -1, 'encoding': None, 'errors': None, 'newline': None, 'closefd': True, 'opener': None, 'ignore_ext': False, 'transport_params': None}
+02-14 16:42 INFO: loaded (303948, 100) matrix from ./input/it.bin
+02-14 16:42 INFO: vocab file not exist, start building
+02-14 16:42 INFO: #Chars: 124
+02-14 16:42 INFO: ('i', 146577)
+02-14 16:42 INFO: ('a', 128674)
+02-14 16:42 INFO: ('e', 127719)
+02-14 16:42 INFO: ('o', 100500)
+02-14 16:42 INFO: ('l', 85875)
+02-14 16:42 INFO: ...
+02-14 16:42 INFO: ('ê', 1)
+02-14 16:42 INFO: ('ã', 1)
+02-14 16:42 INFO: ('í', 1)
+02-14 16:42 INFO: ('ô', 1)
+02-14 16:42 INFO: ('å', 1)
+02-14 16:42 INFO: char vocab size: 125
+02-14 16:42 INFO: 26562/26563 words are initialized with loaded embeddings.
+02-14 16:42 INFO: saving to ./output_2021-02-14-16:42:29/it_isdt-ud-vocab/vocab_100000
+02-14 16:42 INFO: loading tags from ./input/preprocessed/ud_tagfile
+02-14 16:42 INFO: tag vocab size: 18
+02-14 16:42 INFO: #sent: 13033
+02-14 16:42 INFO: #word: 285319
+02-14 16:42 INFO: #tag: 285319
+02-14 16:42 INFO: #sent: 564
+02-14 16:42 INFO: #word: 12683
+02-14 16:42 INFO: #tag: 12683
+02-14 16:42 INFO: #sent: 482
+02-14 16:42 INFO: #word: 11153
+02-14 16:42 INFO: #tag: 11153
+02-14 16:42 INFO: #train data: 13033, max len: 80, min len: 1, avg len: 21.89
+02-14 16:42 INFO: #unk in train sentences: (9820, 285319, 0.03441761677280518)
+02-14 16:42 INFO: #dev data: 564, max len: 84, min len: 4, avg len: 22.49
+02-14 16:42 INFO: #unk in dev sentences: (432, 12683, 0.03406134195379642)
+02-14 16:42 INFO: #test data: 482, max len: 125, min len: 5, avg len: 23.14
+02-14 16:42 INFO: #unk in test sentences: (380, 11153, 0.034071550255536626)
+02-14 16:42 INFO: labeled buffer size: logvar: 13033, mean: 13033
+02-14 16:42 INFO: ************************* DATA PREPARATION *************************
+02-14 16:42 INFO: ************************* MODEL INITIALIZATION *************************
+02-14 16:42 INFO: Initialized with pretrained word embedding
+02-14 16:42 INFO: Word Embedding not trainable
+02-14 16:42 INFO: transferred model to gpu
+02-14 16:42 INFO: vsl_g(
+  (char_encoder): char_rnn(
+    (char_embed): Embedding(125, 50)
+    (char_cell): GRU(50, 100, batch_first=True, bidirectional=True)
+  )
+  (word_embed): Embedding(26563, 100)
+  (word_encoder): GRU(300, 100, batch_first=True, bidirectional=True)
+  (x2token): Linear(in_features=100, out_features=26563, bias=False)
+  (to_latent_variable): gaussian_layer(
+    (q_mean2_mlp): Linear(in_features=200, out_features=50, bias=True)
+    (q_logvar2_mlp): Linear(in_features=200, out_features=50, bias=True)
+  )
+  (classifier): Linear(in_features=50, out_features=18, bias=True)
+  (z2x): Sequential(
+    (0): Linear(in_features=50, out_features=100, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=100, out_features=100, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=100, out_features=100, bias=True)
+  )
+)
+02-14 16:42 INFO: ************************* MODEL INITIALIZATION *************************
+02-14 16:42 INFO: Training start ...
+02-14 16:47 INFO: it: 5000 (max: 1304), kl_temp: 0.65, labeled, loss: 2.989, logloss: 1.224, kl_div: 11.389, sup_loss: 0.364, elapsed time: 297.9(s)
+02-14 16:52 INFO: it: 10000 (max: 1304), kl_temp: 1.00, labeled, loss: 0.760, logloss: 0.288, kl_div: 0.292, sup_loss: 0.207, elapsed time: 301.7(s)
+02-14 16:52 INFO: ************************* DEV SET EVALUATION *************************
+02-14 16:52 INFO: acc: 0.95703, f1: 0.00000, prec: 0.00000, rec: 0.00000, log_loss: 0.101, elapsed time: 1.2(s)
+02-14 16:52 INFO: ************************* DEV SET EVALUATION *************************
+02-14 16:52 INFO: ************************* TEST SET EVALUATION *************************
+02-14 16:52 INFO: acc: 0.95831, f1: 0.00000, prec: 0.00000, rec: 0.00000, log_loss: 0.104, elapsed time: 1.1(s)
+02-14 16:52 INFO: ************************* TEST SET EVALUATION *************************
+02-14 16:52 INFO: model saved to ./output_2021-02-14-16:42:29/model.ckpt
+02-14 16:52 INFO: prior saved to: ./output_2021-02-14-16:42:29/test_g/label_logvar_50
+02-14 16:52 INFO: prior saved to: ./output_2021-02-14-16:42:29/test_g/label_mean_50
+02-14 16:52 INFO: best dev result: 0.9570, test result: 0.9583, 
+02-14 16:57 INFO: it: 15000 (max: 1304), kl_temp: 1.00, labeled, loss: 0.573, logloss: 0.186, kl_div: 0.218, sup_loss: 0.169, elapsed time: 302.1(s)
+02-14 17:02 INFO: it: 20000 (max: 1304), kl_temp: 1.00, labeled, loss: 0.491, logloss: 0.138, kl_div: 0.211, sup_loss: 0.142, elapsed time: 300.5(s)
+02-14 17:02 INFO: ************************* DEV SET EVALUATION *************************
+02-14 17:02 INFO: acc: 0.96775, f1: 0.00000, prec: 0.00000, rec: 0.00000, log_loss: 0.050, elapsed time: 1.2(s)
+02-14 17:02 INFO: ************************* DEV SET EVALUATION *************************
+02-14 17:02 INFO: ************************* TEST SET EVALUATION *************************
+02-14 17:02 INFO: acc: 0.96700, f1: 0.00000, prec: 0.00000, rec: 0.00000, log_loss: 0.048, elapsed time: 1.0(s)
+02-14 17:02 INFO: ************************* TEST SET EVALUATION *************************
+02-14 17:02 INFO: model saved to ./output_2021-02-14-16:42:29/model.ckpt
+02-14 17:02 INFO: prior saved to: ./output_2021-02-14-16:42:29/test_g/label_logvar_50
+02-14 17:02 INFO: prior saved to: ./output_2021-02-14-16:42:29/test_g/label_mean_50
+02-14 17:02 INFO: best dev result: 0.9678, test result: 0.9670, 
+02-14 17:07 INFO: it: 25000 (max: 1304), kl_temp: 1.00, labeled, loss: 0.428, logloss: 0.104, kl_div: 0.201, sup_loss: 0.124, elapsed time: 299.4(s)
+02-14 17:12 INFO: it: 30000 (max: 1304), kl_temp: 1.00, labeled, loss: 0.398, logloss: 0.085, kl_div: 0.203, sup_loss: 0.110, elapsed time: 302.0(s)
+02-14 17:12 INFO: ************************* DEV SET EVALUATION *************************
+02-14 17:12 INFO: acc: 0.97122, f1: 0.00000, prec: 0.00000, rec: 0.00000, log_loss: 0.032, elapsed time: 1.2(s)
+02-14 17:12 INFO: ************************* DEV SET EVALUATION *************************
+02-14 17:12 INFO: ************************* TEST SET EVALUATION *************************
+02-14 17:12 INFO: acc: 0.97158, f1: 0.00000, prec: 0.00000, rec: 0.00000, log_loss: 0.033, elapsed time: 1.0(s)
+02-14 17:12 INFO: ************************* TEST SET EVALUATION *************************
+02-14 17:12 INFO: model saved to ./output_2021-02-14-16:42:29/model.ckpt
+02-14 17:12 INFO: prior saved to: ./output_2021-02-14-16:42:29/test_g/label_logvar_50
+02-14 17:13 INFO: prior saved to: ./output_2021-02-14-16:42:29/test_g/label_mean_50
+02-14 17:13 INFO: best dev result: 0.9712, test result: 0.9716, 
