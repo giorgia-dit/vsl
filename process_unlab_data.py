@@ -18,7 +18,7 @@ from sklearn.model_selection import train_test_split
 def my_args():
     args = argparse.Namespace()
     args.set = 'twita'  # {'coris', 'twita'}
-    args.ratio = 0.017
+    args.ratio = 0.034
     return args
 
 def get_args():
@@ -89,8 +89,7 @@ if __name__ == "__main__":
     logging.info("#unlabel: {}".format(len(unlabel)))
 
     output = f"./input/preprocessed/unlabel.{args.set}"
-    if args.set == 'coris':
-        output += f"_{str(args.ratio)[-2:]}"
+    output += f"_{str(args.ratio)[-2:]}"
 
     pickle.dump(
         unlabel, open(output, "wb+"), protocol=-1)
