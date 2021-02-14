@@ -221,8 +221,8 @@ def run(e):
 def my_args():
     file = 'it_postwita-ud-'  # {'' (evalita), 'it_isdt-ud-', 'it_postwita-ud-', 'fr-ud-'}
     data_group = 'ud'
-    lab_ratio = 0.2
-    unlab_ratio = 0.8
+    lab_ratio = 1.0
+    unlab_ratio = None
 
     data_file_path = f"./input/preprocessed/{file}pproc"
     embed_file_path = f"./input/word_vectors_{file}pproc"
@@ -275,7 +275,7 @@ def my_args():
     args.unlabel_file = None
     args.ur = 0.5
     args.use_cuda = False
-    args.use_unlabel = True
+    args.use_unlabel = False
     args.vocab_file = f"./{output_dir}/{file}vocab"
     args.vocab_size = 100000
     args.xvar = 0.001
