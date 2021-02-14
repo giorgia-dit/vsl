@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split
 
 
 def my_args():
-    file = 'it_isdt-ud-'
+    file = 'it_postwita-ud-'
     output_dir = 'input/preprocessed'
 
     args = argparse.Namespace()
@@ -18,7 +18,7 @@ def my_args():
     args.test = f"./input/{file}test.conllu"
     args.output = f"./{output_dir}/{file}pproc"
     args.labratio = 0.2
-    args.unlabratio = 0.8
+    args.unlabratio = 0.2
     return args
 
 
