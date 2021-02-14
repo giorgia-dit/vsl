@@ -325,7 +325,7 @@ def my_args():
     args.ufl = 1
     args.ufu = 1
     args.unlabel_batch_size = 10
-    args.unlabel_file = f"./input/preprocessed/unlabel.twita"  # unlabel.twita / .coris_29 (isdt) / .coris_13 (evalita) / NONE
+    args.unlabel_file = f"./input/preprocessed/unlabel.twita_17"  # unlabel.twita_17 / .coris_29 (isdt) / .coris_13 (evalita) / NONE
     args.ur = 0.5  # default: 0.1
     args.use_cuda = False
     args.use_unlabel = True
