@@ -298,7 +298,7 @@ def my_args():
     args.edim = 100
     args.embed_file = f"./input/it.bin"
     args.embed_type = f"ud"
-    args.eval_every = 2  # FIX: 10000
+    args.eval_every = 10000  # FIX: 10000
     args.f1_score = False
     args.grad_clip = 10.0
     args.klr = 0.0001
@@ -307,10 +307,10 @@ def my_args():
     args.mhsize = 100
     args.mlayer = 2
     args.model = f"{model}"
-    args.n_iter = 10  # FIX: 30000 (10)
+    args.n_iter = 30000  # FIX: 30000 (10)
     args.opt = f"adam"
     args.prefix = None
-    args.print_every = 5  # FIX: 5000
+    args.print_every = 5000  # FIX: 5000
     args.prior_file = f"./{output_dir}/test_gg_{model}"
     args.random_seed = 0
     args.rsize = 100
