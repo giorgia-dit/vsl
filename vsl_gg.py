@@ -272,7 +272,7 @@ def my_args():
     file = ''  # {'' (evalita), 'it_isdt-ud-', 'it_postwita-ud-', 'fr-ud-'}
     data_group = 'evalita'  # {ud, evalita}
     lab_ratio = 0.2
-    unlab_ratio = 0.2
+    unlab_ratio = 0.5
 
     data_file_path = f"./input/preprocessed/{file}pproc"
     embed_file_path = f"./input/word_vectors_{file}pproc"
