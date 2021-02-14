@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import argparse
 
 import torch
@@ -6,6 +8,8 @@ import train_helper
 import data_utils
 
 import numpy as np
+
+from datetime import datetime
 
 from models import vsl_gg
 from tensorboardX import SummaryWriter
@@ -106,7 +110,8 @@ def run(e):
     e.log.info("*" * 25 + " MODEL INITIALIZATION " + "*" * 25)
 
     if e.config.summarize:
-        writer = SummaryWriter(e.experiment_dir)
+        output_dir = e.config.prior_file.rsplit('/', maxsplit=1)[0]
+        writer = SummaryWriter(output_dir)
 
     label_batch = data_utils.minibatcher(
         word_data=data.train[0],
@@ -264,11 +269,23 @@ def run(e):
 
 
 def my_args():
-    file = 'it_isdt-ud-'
-    lang = 'it'
-    datatype = 'ud'
-    model = 'flat'
-    output_dir = 'output'
+    file = ''  # {'' (evalita), 'it_isdt-ud-', 'it_postwita-ud-', 'fr-ud-'}
+    data_group = 'evalita'
+    lab_ratio = 0.2
+    unlab_ratio = None
+
+    data_file_path = f"./input/preprocessed/{file}pproc"
+    embed_file_path = f"./input/word_vectors_{file}pproc"
+    if lab_ratio != 1.0:
+        data_file_path += f"_l{str(lab_ratio)[-1]}"
+        embed_file_path += f"_l{str(lab_ratio)[-1]}"
+    if unlab_ratio:
+        data_file_path += f"_ul{str(unlab_ratio)[-1]}"
+    data_file_path += f".{data_group}"
+
+    model = 'hier'
+    today = datetime.today().strftime('%Y-%m-%d-%H:%M:%S')
+    output_dir = 'output_' + today
 
     args = argparse.Namespace()
 
@@ -276,12 +293,12 @@ def my_args():
     args.cdim = 50
     args.char_vocab_size = 300
     args.chsize = 100
-    args.data_file = f"./{output_dir}/{file}pproc.ud"
+    args.data_file = data_file_path
     args.debug = True
     args.edim = 100
-    args.embed_file = f"./input/{lang}.bin"
-    args.embed_type = f"{datatype}"
-    args.eval_every = 10000
+    args.embed_file = f"./input/it.bin"
+    args.embed_type = f"ud"
+    args.eval_every = 2  # FIX: 10000
     args.f1_score = False
     args.grad_clip = 10.0
     args.klr = 0.0001
@@ -290,17 +307,17 @@ def my_args():
     args.mhsize = 100
     args.mlayer = 2
     args.model = f"{model}"
-    args.n_iter = 2
+    args.n_iter = 10  # FIX: 30000 (10)
     args.opt = f"adam"
     args.prefix = None
-    args.print_every = 5000
+    args.print_every = 5  # FIX: 5000
     args.prior_file = f"./{output_dir}/test_gg_{model}"
     args.random_seed = 0
     args.rsize = 100
     args.rtype = f"gru"
     args.save_prior = True
     args.summarize = True
-    args.tag_file = f"./{output_dir}/{datatype}_tagfile"
+    args.tag_file = f"./input/preprocessed/{data_group}_tagfile"
     args.train_emb = False
     args.tw = True
     args.ufl = 1

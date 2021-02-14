@@ -34,6 +34,15 @@ class data_processor:
                 train_data = dataset['train']
                 dev_data = dataset['dev']
                 test_data = dataset['test']
+
+                # TODO FIX
+                # train_data[0] = train_data[0][:3]
+                # train_data[1] = train_data[1][:3]
+                # dev_data[0] = dev_data[0][:3]
+                # dev_data[1] = dev_data[1][:3]
+                # test_data[0] = test_data[0][:3]
+                # test_data[1] = test_data[1][:3]
+
             else:
                 train_data, dev_data, test_data = pickle.load(infile)
             train_v_data = train_data[0]
@@ -45,6 +54,9 @@ class data_processor:
             else:
                 unlabeled_data = self._load_sent(self.expe.config.unlabel_file)
             train_v_data = unlabeled_data + train_data[0]
+
+            # TODO FIX
+            # unlabeled_data = unlabeled_data[:3]
 
         W, vocab, char_vocab = \
             self._build_vocab_from_embedding(
