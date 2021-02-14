@@ -269,10 +269,10 @@ def run(e):
 
 
 def my_args():
-    file = ''  # {'' (evalita), 'it_isdt-ud-', 'it_postwita-ud-', 'fr-ud-'}
-    data_group = 'evalita'  # {ud, evalita}
-    lab_ratio = 0.2
-    unlab_ratio = 0.8
+    file = 'it_isdt-ud-'  # {'' (evalita), 'it_isdt-ud-', 'it_postwita-ud-', 'fr-ud-'}
+    data_group = 'ud'  # {ud, evalita}
+    lab_ratio = 0.5
+    unlab_ratio = 0.5
 
     data_file_path = f"./input/preprocessed/{file}pproc"
     embed_file_path = f"./input/word_vectors_{file}pproc"
@@ -314,7 +314,7 @@ def my_args():
     args.prefix = None
     args.print_every = 5000  # FIX: 5000 (2)
     args.prior_file = f"./{output_dir}/test_gg_{model}"
-    args.random_seed = 2  # {0, 1, 15, 16, 17}
+    args.random_seed = 0  # {0, 1, 15, 16, 17}
     args.rsize = 500  # authors value: 100
     args.rtype = f"gru"
     args.save_prior = True
