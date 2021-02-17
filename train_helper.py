@@ -320,8 +320,10 @@ class evaluator:
     @auto_init_args
     def __init__(self, inv_tag_vocab, model, experiment):
         self.expe = experiment
+        self.nemar_counts = {}
 
     def evaluate(self, data, k_counts):
+        self.nemar_counts = {}
         self.model.eval()
         eval_stats = tracker(["log_loss"])
         if self.expe.config.f1_score:
@@ -353,14 +355,10 @@ class evaluator:
                         if mm[1] == k:
                             k_counts[k] += 1
 
-                global nemar_counts
-
                 temp_d = ((label == pred) * mask)
-                temp_e = np.vstack((np.ravel(data), np.ravel(temp_d)))
-                if type(nemar_counts) == int:
-                    nemar_counts = temp_e
-                else:
-                    nemar_counts = np.hstack((nemar_counts, temp_e))
+                for x in range(len(temp_d)):
+                    for y in range(len(temp_d[x])):
+                        self.nemar_counts[data[x][y]] = temp_d[x][y]
 
             eval_stats.update(
                 {"log_loss": log_loss}, mask.sum())

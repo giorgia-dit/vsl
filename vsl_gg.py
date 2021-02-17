@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import pickle
 
 import torch
 import config
@@ -16,7 +17,7 @@ from datetime import datetime
 
 best_dev_res = test_res = 0
 k_counts = {}
-nemar_counts = 42
+
 
 def run(e):
     global best_dev_res, test_res
@@ -26,7 +27,7 @@ def run(e):
     data, W = dp.process()
 
     # todo check
-    global k_counts, nemar_counts
+    global k_counts
     for k in data.inv_tag_vocab.values():
         if k != "_":
             k_counts[k] = 0
@@ -251,6 +252,8 @@ def run(e):
                 e.log.info("*" * 25 + " TEST SET EVALUATION " + "*" * 25)
 
                 test_perf, test_res = evaluator.evaluate(data.test, k_counts=k_counts)
+                with open(f"{output_dir}/nemar_{it}.pkl", 'wb+') as f:
+                    pickle.dump(evaluator.nemar_counts, f, protocol=-1)
 
                 e.log.info("*" * 25 + " TEST SET EVALUATION " + "*" * 25)
 
@@ -306,7 +309,7 @@ def my_args():
     args.data_file = data_file_path
     args.debug = True
     args.edim = 768
-    args.embed_file = None # embed_file_path
+    args.embed_file = embed_file_path
     args.embed_type = 'bert'
     args.eval_every = 2  # FIX: 10000 (2)
     args.f1_score = False # fix: False
@@ -368,8 +371,6 @@ if __name__ == '__main__':
         errors_on_log += f"The tag with maximum error rate is: {max_key}, with rate {prop[max_key]:.2f}"
         e.log.info(errors_on_log)
 
-        global nemar_counts
-        np.save(f"./nemar.npy", nemar_counts)
         ###
         exit()
 
