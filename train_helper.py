@@ -321,7 +321,7 @@ class evaluator:
     def __init__(self, inv_tag_vocab, model, experiment):
         self.expe = experiment
 
-    def evaluate(self, data, eval_flag):
+    def evaluate(self, data, k_counts):
         self.model.eval()
         eval_stats = tracker(["log_loss"])
         if self.expe.config.f1_score:
@@ -341,19 +341,26 @@ class evaluator:
             pred, log_loss = outputs[-1], outputs[1]
             reporter.update(pred, label, mask)
 
-            if eval_flag == 'test':
+            if k_counts:
                 temp_a = ((label != pred) * mask)
                 temp_b = np.where(temp_a == 1)
                 temp_c = list(zip(temp_b[0], temp_b[1]))
                 mm_ind = [(pred[i][j], label[i][j]) for (i,j) in temp_c]
                 mm_verbose = [(self.inv_tag_vocab[p], self.inv_tag_vocab[l]) for (p,l) in mm_ind]
 
-                res = "\n".join([str(t) for t in mm_verbose])
-                log_mm = f"Here are the wrong predictions made: \n" \
-                     f"[couples are made in this fashion: 1) prediction, 2) label]" \
-                     f"{res}"
+                for k in k_counts.keys():
+                    for mm in mm_verbose:
+                        if mm[1] == k:
+                            k_counts[k] += 1
 
-                self.expe.log.info(log_mm)
+                global nemar_counts
+
+                temp_d = ((label == pred) * mask)
+                temp_e = np.vstack((np.ravel(data), np.ravel(temp_d)))
+                if type(nemar_counts) == int:
+                    nemar_counts = temp_e
+                else:
+                    nemar_counts = np.hstack((nemar_counts, temp_e))
 
             eval_stats.update(
                 {"log_loss": log_loss}, mask.sum())

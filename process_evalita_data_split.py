@@ -13,8 +13,8 @@ def my_args():
 
     args.train = "./input/train_valid.txt"
     args.test = "./input/test.txt"
-    args.labratio = 0.2
-    args.unlabratio = 0.2
+    args.labratio = 1.0
+    args.unlabratio = None
     return args
 
 def get_args():
@@ -83,10 +83,10 @@ if __name__ == "__main__":
         unlabel = [unlabel_sents, unlabel_tags]
 
 
-    logging.info("#train: {}".format(len(train[0])))
-    logging.info("#unlabeled: {}".format(len(unlabel[0])))
-    logging.info("#dev: {}".format(len(dev[0])))
-    logging.info("#test: {}".format(len(test[0])))
+    logging.info(f"#train: {len(train[0]), sum([len(i) for i in train[0]])}")
+    # logging.info("#unlabeled: {}".format(len(unlabel[0])))
+    logging.info(f"#dev: {len(dev[0]), sum([len(i) for i in dev[0]])}")
+    logging.info(f"#test: {len(test[0]), sum([len(i) for i in test[0]])}")
 
     dataset = {"train": train,
                "unlabel": unlabel,
@@ -102,3 +102,25 @@ if __name__ == "__main__":
 
     pickle.dump(
         dataset, open(output, "wb+"), protocol=-1)
+
+    ## statistics computation
+
+    logging.info("statistics on test tags below: \n")
+
+    k_counts = {}
+    for t in tag_set:
+        k_counts[t] = 0
+        for i in test[1]:
+            for j in i:
+                if j == t:
+                    k_counts[t] += 1
+
+    temp_log = ''
+    temp_tot = sum(k_counts.values())
+    temp_prop = {}
+    for k, c in sorted(k_counts.items()):
+        temp_prop[k] = (c / temp_tot) * 100
+        temp_log += f"({k},{c},{temp_prop[k]:.2f}) \n"
+    max_key = max(temp_prop, key=temp_prop.get)
+    temp_log += f"The tag occurring the most is: {max_key}, with rate {temp_prop[max_key]:.2f}"
+    logging.info(temp_log)

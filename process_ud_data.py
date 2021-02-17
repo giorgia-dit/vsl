@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split
 
 
 def my_args():
-    file = 'it_isdt-ud-'
+    file = 'it_postwita-ud-'
     output_dir = 'input/preprocessed'
 
     args = argparse.Namespace()
@@ -17,7 +17,7 @@ def my_args():
     args.dev = f"./input/{file}dev.conllu"
     args.test = f"./input/{file}test.conllu"
     args.output = f"./{output_dir}/{file}pproc"
-    args.labratio = 0.2
+    args.labratio = 1.0
     args.unlabratio = None
     return args
 
@@ -126,3 +126,27 @@ if __name__ == "__main__":
                "test": [test_sents, test_tags]}
     pickle.dump(dataset, open(output, "wb+"), protocol=-1)
     logging.info("data saved to {}".format(output))
+
+    ## statistics computation
+
+    logging.info("statistics on test tags below: \n")
+
+    k_counts = {}
+    for t in tag_set:
+        if t != "_":
+            k_counts[t] = 0
+            for i in test_tags:
+                for j in i:
+                    if j == t:
+                        k_counts[t] += 1
+
+    temp_log = ''
+    temp_tot = sum(k_counts.values())
+    temp_prop = {}
+    for k, c in sorted(k_counts.items()):
+        temp_prop[k] = (c / temp_tot) * 100
+        temp_log += f"({k},{c},{temp_prop[k]:.2f}) \n"
+    max_key = max(temp_prop, key=temp_prop.get)
+    temp_log += f"The tag occurring the most is: {max_key}, with rate {temp_prop[max_key]:.3f}"
+    logging.info(temp_log)
+
