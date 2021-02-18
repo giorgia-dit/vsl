@@ -358,7 +358,11 @@ class evaluator:
                 temp_d = ((label == pred) * mask)
                 for x in range(len(temp_d)):
                     for y in range(len(temp_d[x])):
-                        self.nemar_counts[data[x][y]] = temp_d[x][y]
+                        self.nemar_counts[data[x][y]] = {
+                            'res': temp_d[x][y],
+                            'true_tag': self.inv_tag_vocab[label[x][y]],
+                            'pred_tag': self.inv_tag_vocab[pred[x][y]]
+                             }
 
             eval_stats.update(
                 {"log_loss": log_loss}, mask.sum())

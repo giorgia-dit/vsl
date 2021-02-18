@@ -280,9 +280,9 @@ def run(e):
 
 
 def my_args():
-    file = ''  # {'' (evalita), 'it_isdt-ud-', 'it_postwita-ud-', 'fr-ud-'}
-    data_group = 'evalita'  # {ud, evalita}
-    lab_ratio = 0.2
+    file = 'it_isdt-ud-'  # {'' (evalita), 'it_isdt-ud-', 'it_postwita-ud-', 'fr-ud-'}
+    data_group = 'ud'  # {ud, evalita}
+    lab_ratio = 1.0
     unlab_ratio = None
 
     data_file_path = f"./input/preprocessed/{file}pproc"
@@ -311,7 +311,7 @@ def my_args():
     args.edim = 768
     args.embed_file = embed_file_path
     args.embed_type = 'bert'
-    args.eval_every = 2  # FIX: 10000 (2)
+    args.eval_every = 10000  # FIX: 10000 (2)
     args.f1_score = False # fix: False
     args.grad_clip = 10.0
     args.klr = 0.0001
@@ -320,11 +320,11 @@ def my_args():
     args.mhsize = 500  # authors value: 100
     args.mlayer = 2
     args.model = f"{model}"
-    args.n_iter = 10  # FIX: 30000 (10)
+    args.n_iter = 30000  # FIX: 30000 (10)
     args.opt = f"adam"
     args.output_dir = output_dir
     args.prefix = None
-    args.print_every = 2  # FIX: 5000 (2)
+    args.print_every = 5000  # FIX: 5000 (2)
     args.prior_file = f"./{output_dir}/test_gg_{model}"
     args.random_seed = 0  # {0, 1, 15, 16, 17}
     args.rsize = 500  # authors value: 100
