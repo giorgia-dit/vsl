@@ -106,7 +106,8 @@ class experiment:
     @property
     def experiment_dir(self):
         if self.config.debug:
-            return "./"
+            output_dir = self.config.prior_file.rsplit('/', maxsplit=1)[0]
+            return f"{output_dir}"
         else:
             # get namespace for each group of args
             arg_g = dict()
@@ -139,18 +140,12 @@ class experiment:
 
     def __enter__(self):
 
-        if self.config.debug:
-            logging.basicConfig(
-                level=logging.DEBUG,
-                format='%(asctime)s %(levelname)s: %(message)s',
-                datefmt='%m-%d %H:%M')
-        else:
-            print("log saving to", self.log_file)
-            logging.basicConfig(
-                filename=self.log_file,
-                filemode='w+', level=logging.INFO,
-                format='%(asctime)s %(levelname)s: %(message)s',
-                datefmt='%m-%d %H:%M')
+        print("log saving to", self.log_file)
+        logging.basicConfig(
+            filename=self.log_file,
+            filemode='w+', level=logging.DEBUG,
+            format='%(asctime)s %(levelname)s: %(message)s',
+            datefmt='%m-%d %H:%M')
 
         self.log = logging.getLogger()
         return self
@@ -325,8 +320,10 @@ class evaluator:
     @auto_init_args
     def __init__(self, inv_tag_vocab, model, experiment):
         self.expe = experiment
+        self.nemar_counts = {}
 
-    def evaluate(self, data):
+    def evaluate(self, data, k_counts):
+        self.nemar_counts = {}
         self.model.eval()
         eval_stats = tracker(["log_loss"])
         if self.expe.config.f1_score:
@@ -338,12 +335,33 @@ class evaluator:
                 word_data=data[0],
                 char_data=data[1],
                 label=data[2],
-                batch_size=100,
+                batch_size=self.expe.config.batch_size,
                 shuffle=False):
             outputs = self.model(data, mask, char, char_mask,
                                  label, None, None, 1.0)
             pred, log_loss = outputs[-1], outputs[1]
             reporter.update(pred, label, mask)
+
+            if k_counts:
+                temp_a = ((label != pred) * mask)
+                temp_b = np.where(temp_a == 1)
+                temp_c = list(zip(temp_b[0], temp_b[1]))
+                mm_ind = [(pred[i][j], label[i][j]) for (i,j) in temp_c]
+                mm_verbose = [(self.inv_tag_vocab[p], self.inv_tag_vocab[l]) for (p,l) in mm_ind]
+
+                for k in k_counts.keys():
+                    for mm in mm_verbose:
+                        if mm[1] == k:
+                            k_counts[k] += 1
+
+                temp_d = ((label == pred) * mask)
+                for x in range(len(temp_d)):
+                    for y in range(len(temp_d[x])):
+                        self.nemar_counts[data[x][y]] = {
+                            'res': temp_d[x][y],
+                            'true_tag': self.inv_tag_vocab[label[x][y]],
+                            'pred_tag': self.inv_tag_vocab[pred[x][y]]
+                             }
 
             eval_stats.update(
                 {"log_loss": log_loss}, mask.sum())

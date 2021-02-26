@@ -1,4 +1,7 @@
+#!/usr/bin/env python3
+
 import argparse
+import pickle
 
 import torch
 import config
@@ -10,7 +13,10 @@ import numpy as np
 from models import vsl_gg
 from tensorboardX import SummaryWriter
 
+from datetime import datetime
+
 best_dev_res = test_res = 0
+k_counts = {}
 
 
 def run(e):
@@ -19,6 +25,13 @@ def run(e):
     e.log.info("*" * 25 + " DATA PREPARATION " + "*" * 25)
     dp = data_utils.data_processor(experiment=e)
     data, W = dp.process()
+
+    # todo check
+    global k_counts
+    for k in data.inv_tag_vocab.values():
+        if k != "_":
+            k_counts[k] = 0
+    ######
 
     label_logvar1_buffer = \
         train_helper.prior_buffer(data.train[0], e.config.zsize,
@@ -106,7 +119,8 @@ def run(e):
     e.log.info("*" * 25 + " MODEL INITIALIZATION " + "*" * 25)
 
     if e.config.summarize:
-        writer = SummaryWriter(e.experiment_dir)
+        output_dir = e.config.prior_file.rsplit('/', maxsplit=1)[0]
+        writer = SummaryWriter(output_dir)
 
     label_batch = data_utils.minibatcher(
         word_data=data.train[0],
@@ -223,7 +237,7 @@ def run(e):
 
             e.log.info("*" * 25 + " DEV SET EVALUATION " + "*" * 25)
 
-            dev_perf, dev_res = evaluator.evaluate(data.dev)
+            dev_perf, dev_res = evaluator.evaluate(data.dev, k_counts=None)
 
             e.log.info("*" * 25 + " DEV SET EVALUATION " + "*" * 25)
 
@@ -237,7 +251,9 @@ def run(e):
 
                 e.log.info("*" * 25 + " TEST SET EVALUATION " + "*" * 25)
 
-                test_perf, test_res = evaluator.evaluate(data.test)
+                test_perf, test_res = evaluator.evaluate(data.test, k_counts=k_counts)
+                with open(f"{output_dir}/nemar_{it}.pkl", 'wb+') as f:
+                    pickle.dump(evaluator.nemar_counts, f, protocol=-1)
 
                 e.log.info("*" * 25 + " TEST SET EVALUATION " + "*" * 25)
 
@@ -264,11 +280,21 @@ def run(e):
 
 
 def my_args():
-    file = 'it_isdt-ud-'
-    lang = 'it'
-    datatype = 'ud'
-    model = 'flat'
-    output_dir = 'output'
+    file = 'it_postwita-ud-'  # {'' (evalita), 'it_isdt-ud-', 'it_postwita-ud-', 'fr-ud-'}
+    data_group = 'ud'  # {ud, evalita}
+    lab_ratio = 1.0
+    unlab_ratio = None
+
+    data_file_path = f"./input/preprocessed/{file}pproc"
+    if lab_ratio != 1.0:
+        data_file_path += f"_l{str(lab_ratio)[-1]}"
+    if unlab_ratio:
+        data_file_path += f"_ul{str(unlab_ratio)[-1]}"
+    data_file_path += f".{data_group}"
+
+    model = 'hier'
+    today = datetime.today().strftime('%Y-%m-%d-%H:%M:%S')
+    output_dir = 'output_' + today
 
     args = argparse.Namespace()
 
@@ -276,11 +302,11 @@ def my_args():
     args.cdim = 50
     args.char_vocab_size = 300
     args.chsize = 100
-    args.data_file = f"./{output_dir}/{file}pproc.ud"
+    args.data_file = data_file_path
     args.debug = True
     args.edim = 100
-    args.embed_file = f"./input/{lang}.bin"
-    args.embed_type = f"{datatype}"
+    args.embed_file = f"./input/it.bin"
+    args.embed_type = f"ud"
     args.eval_every = 10000
     args.f1_score = False
     args.grad_clip = 10.0
@@ -290,17 +316,17 @@ def my_args():
     args.mhsize = 100
     args.mlayer = 2
     args.model = f"{model}"
-    args.n_iter = 2
+    args.n_iter = 30000  # FIX: 30000 (10)
     args.opt = f"adam"
     args.prefix = None
     args.print_every = 5000
     args.prior_file = f"./{output_dir}/test_gg_{model}"
-    args.random_seed = 0
+    args.random_seed = 0  # {0, 1, 15, 16, 17}
     args.rsize = 100
     args.rtype = f"gru"
     args.save_prior = True
     args.summarize = True
-    args.tag_file = f"./{output_dir}/{datatype}_tagfile"
+    args.tag_file = f"./input/preprocessed/{data_group}_tagfile"
     args.train_emb = False
     args.tw = True
     args.ufl = 1
@@ -323,12 +349,24 @@ if __name__ == '__main__':
     args = my_args()
     args.use_cuda = torch.cuda.is_available()
 
-
     def exit_handler(*args):
         print(args)
         print("best dev result: {:.4f}, "
               "test result: {:.4f}"
               .format(best_dev_res, test_res))
+        ### todo check
+        errors_on_log = ''
+        tot_err = sum(k_counts.values())
+        prop = {}
+        for k, c in sorted(k_counts.items()):
+            prop[k] = (c / tot_err) * 100
+            print(k, c, prop[k])
+            errors_on_log += f"({k},{c},{prop[k]:.2f}) \n"
+        max_key = max(prop, key=prop.get)
+        errors_on_log += f"The tag with maximum error rate is: {max_key}, with rate {prop[max_key]:.2f}"
+        e.log.info(errors_on_log)
+
+        ###
         exit()
 
     train_helper.register_exit_handler(exit_handler)
