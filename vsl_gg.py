@@ -280,10 +280,10 @@ def run(e):
 
 
 def my_args():
-    file = 'it_isdt-ud-'  # {'' (evalita), 'it_isdt-ud-', 'it_postwita-ud-', 'fr-ud-'}
+    file = 'it_postwita-ud-'  # {'' (evalita), 'it_isdt-ud-', 'it_postwita-ud-', 'fr-ud-'}
     data_group = 'ud'  # {ud, evalita}
-    lab_ratio = 1.0
-    unlab_ratio = None
+    lab_ratio = 0.2
+    unlab_ratio = 0.8
 
     data_file_path = f"./input/preprocessed/{file}pproc"
     embed_file_path = f"./input/word_vectors_{file}pproc"
@@ -309,7 +309,7 @@ def my_args():
     args.data_file = data_file_path
     args.debug = True
     args.edim = 768
-    args.embed_file = embed_file_path
+    args.embed_file = None  # embed_file_path
     args.embed_type = 'bert'
     args.eval_every = 10000  # FIX: 10000 (2)
     args.f1_score = False # fix: False
@@ -340,7 +340,7 @@ def my_args():
     args.unlabel_file = None  # unlabel.twita / .coris_29 (isdt) / .coris_13 (evalita) / NONE
     args.ur = 0.5  # default: 0.1
     args.use_cuda = False
-    args.use_unlabel = False
+    args.use_unlabel = True
     args.vocab_file = f"./{output_dir}/{file}vocab"
     args.vocab_size = 100000
     args.xvar = 0.001

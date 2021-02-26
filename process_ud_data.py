@@ -93,6 +93,14 @@ if __name__ == "__main__":
             train_test_split(all_sents, all_tags,
                              train_size=args.labratio, test_size=args.unlabratio, shuffle=True)
 
+    # todo check: statistics
+    mean_length = sum([len(s) for s in all_sents])/len(all_sents)
+    max_length = max([len(s) for s in all_sents])
+    logging.info(f"mean length of sentences in dataset: {mean_length}\n"
+                 f"max length of sentences in dataset: {max_length}")
+
+
+
     logging.info("#train sents: {}, #train words: {}, #train tags: {}"
                  .format(len(train_sents), len(sum(train_sents, [])),
                          len(sum(train_tags, []))))
@@ -127,15 +135,39 @@ if __name__ == "__main__":
     pickle.dump(dataset, open(output, "wb+"), protocol=-1)
     logging.info("data saved to {}".format(output))
 
-    ## statistics computation
+    ## statistics computation for test
 
-    logging.info("statistics on test tags below: \n")
+    # logging.info("statistics on test tags below: \n")
+    #
+    # k_counts = {}
+    # for t in tag_set:
+    #     if t != "_":
+    #         k_counts[t] = 0
+    #         for i in test_tags:
+    #             for j in i:
+    #                 if j == t:
+    #                     k_counts[t] += 1
+    #
+    # temp_log = ''
+    # temp_tot = sum(k_counts.values())
+    # temp_prop = {}
+    # for k, c in sorted(k_counts.items()):
+    #     temp_prop[k] = (c / temp_tot) * 100
+    #     temp_log += f"({k},{c},{temp_prop[k]:.2f}) \n"
+    # max_key = max(temp_prop, key=temp_prop.get)
+    # temp_log += f"The tag occurring the most is: {max_key}, with rate {temp_prop[max_key]:.3f}"
+    # logging.info(temp_log)
+
+
+    #statistic computation for training
+
+    logging.info("statistics on train tags below: \n")
 
     k_counts = {}
     for t in tag_set:
-        if t != "_":
+        if t != "_" and t != "X":
             k_counts[t] = 0
-            for i in test_tags:
+            for i in train_tags:
                 for j in i:
                     if j == t:
                         k_counts[t] += 1
