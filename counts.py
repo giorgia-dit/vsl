@@ -2,6 +2,7 @@ import pickle
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+from statsmodels.stats.contingency_tables import mcnemar
 
 
 # use grouped == True for EVALITA ONLY
@@ -100,7 +101,6 @@ def combination_count(data_dictionary, tag_vocabulary, grouped=False):
                                             comb_count[group][group_prime] += 1
 
     return comb_count
-
 
 # bar plot with err percentages for tag on total occ
 def plot_err_perc(count_dict, dataset):
@@ -223,9 +223,35 @@ def plot_combinations(comb_count, dataset):
     fig.tight_layout()
     plt.show()
 
+def nemar_test(data_dict1, data_dict2):
+    nemar_dict = {}
+    for obs in data_dict1.keys():
+        nemar_dict[obs] = {}
+        nemar_dict[obs]['c1'] = data_dict1[obs]['res']
+        nemar_dict[obs]['c2'] = data_dict2[obs]['res']
+
+    table = [[-1, -1], [-1, -1]]
+
+    for obs in nemar_dict.keys():
+        if nemar_dict[obs]['c1'] == nemar_dict[obs]['c2']:
+            if nemar_dict[obs]['c1'] == 1:
+                table[0][0] += 1
+            else:
+                table[1][1] += 1
+        else:
+            if nemar_dict[obs]['c1'] == 1:
+                table[0][1] += 1
+            else:
+                table[1][0] += 1
+
+    result = mcnemar(table, exact=False, correction=True)
+
+    return table, result
+
+
 
 if __name__ == '__main__':
-    dataset = 'twita'
+    dataset = ''
 
     if dataset == 'evalita':
         file_name = './' + 'output_evalita_100_nemar/' + 'nemar_29999.pkl'
@@ -247,7 +273,7 @@ if __name__ == '__main__':
 
         # plot_err_rel(evalita_count,dataset=dataset)
 
-        plot_tag_dist(evalita_count, evalita_train_data, 'evalita')
+        # plot_tag_dist(evalita_count, evalita_train_data, 'evalita')
 
         # plot_combinations(evalita_comb_count,dataset=dataset)
 
@@ -288,9 +314,11 @@ if __name__ == '__main__':
 
         # plot_err_rel(isdt_count,dataset=dataset)
 
-        plot_tag_dist(isdt_count, isdt_train_data, 'isdt')
+        # plot_tag_dist(isdt_count, isdt_train_data, 'isdt')
 
         # plot_combinations(isdt_comb_count, dataset=dataset)
+
+
 
     elif dataset == 'twita':
         file_name = './' + 'output_postwita_100_nemar/' + 'nemar_19999.pkl'
@@ -326,14 +354,34 @@ if __name__ == '__main__':
 
         # plot_err_rel(twita_count,dataset=dataset)
 
-        plot_tag_dist(twita_count,twita_train_data,'twita')
+        # plot_tag_dist(twita_count,twita_train_data,'twita')
 
         # plot_combinations(twita_comb_count, dataset=dataset)
 
 
+    else:
+        # file_name = './' + 'output_postwita_100_nemar/' + 'nemar_19999.pkl'
+        # with open(file_name, "rb") as fp:
+        #     twita1_data = pickle.load(fp)
+        #
+        # file_name = './' + 'output_postwita_100_nemar/' + 'nemar_19999.pkl'
+        # with open(file_name, "rb") as file:
+        #     twita2_data = pickle.load(file)
+        #
+        # table, result = nemar_test(twita1_data, twita2_data)
+        #
+        # # summarize the finding
+        # print('statistic=%.3f, p-value=%.3f' % (result.statistic, result.pvalue))
+        # # interpret the p-value
+        # alpha = 0.05
+        # if result.pvalue > alpha:
+        #     print('Same proportions of errors (fail to reject H0)')
+        # else:
+        #     print('Different proportions of errors (reject H0)')
 
+        file_name = './' + 'output_postwita_100_base_nemar/' + 'nemar_29999.pkl'
+        with open(file_name, "rb") as fp:
+            prova = pickle.load(fp)
+        df = pd.DataFrame.from_dict(prova, orient='index')
 
-
-
-
-
+        print(df)
