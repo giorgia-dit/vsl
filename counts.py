@@ -225,21 +225,21 @@ def plot_combinations(comb_count, dataset):
 
 def nemar_test(data_dict1, data_dict2):
     nemar_dict = {}
-    for obs in data_dict1.keys():
-        nemar_dict[obs] = {}
-        nemar_dict[obs]['c1'] = data_dict1[obs]['res']
-        nemar_dict[obs]['c2'] = data_dict2[obs]['res']
+    for obs_i in range(len(data_dict1.keys())):
+        nemar_dict[obs_i] = {}
+        nemar_dict[obs_i]['c1'] = data_dict1[list(data_dict1.keys())[obs_i]]['res']
+        nemar_dict[obs_i]['c2'] = data_dict2[list(data_dict2.keys())[obs_i]]['res']
 
     table = [[-1, -1], [-1, -1]]
 
-    for obs in nemar_dict.keys():
-        if nemar_dict[obs]['c1'] == nemar_dict[obs]['c2']:
-            if nemar_dict[obs]['c1'] == 1:
+    for obs_i in range(len(nemar_dict.keys())):
+        if nemar_dict[obs_i]['c1'] == nemar_dict[obs_i]['c2']:
+            if nemar_dict[obs_i]['c1'] == 1:
                 table[0][0] += 1
             else:
                 table[1][1] += 1
         else:
-            if nemar_dict[obs]['c1'] == 1:
+            if nemar_dict[obs_i]['c1'] == 1:
                 table[0][1] += 1
             else:
                 table[1][0] += 1
@@ -360,15 +360,18 @@ if __name__ == '__main__':
 
 
     else:
-        # file_name = './' + 'output_postwita_100_nemar/' + 'nemar_19999.pkl'
+        # EVALITA
+
+        # file_name = './' + 'output_evalita_20_nemar/' + 'nemar_9999.pkl'
         # with open(file_name, "rb") as fp:
-        #     twita1_data = pickle.load(fp)
+        #     evalita20_data = pickle.load(fp)
         #
-        # file_name = './' + 'output_postwita_100_nemar/' + 'nemar_19999.pkl'
+        # file_name = './' + 'output_evalita_20_80_nemar/' + 'nemar_9999.pkl'
         # with open(file_name, "rb") as file:
-        #     twita2_data = pickle.load(file)
+        #     evalita2080_data = pickle.load(file)
         #
-        # table, result = nemar_test(twita1_data, twita2_data)
+        # table, result = nemar_test(evalita20_data, evalita2080_data)
+        # print(table)
         #
         # # summarize the finding
         # print('statistic=%.3f, p-value=%.3f' % (result.statistic, result.pvalue))
@@ -379,7 +382,54 @@ if __name__ == '__main__':
         # else:
         #     print('Different proportions of errors (reject H0)')
 
-        file_name = './' + 'output_postwita_100_base_nemar/' + 'nemar_29999.pkl'
+        # POSTWITA
+
+        # file_name = './' + 'output_postwita_20_nemar/' + 'nemar_9999.pkl'
+        # with open(file_name, "rb") as fp:
+        #     twita20_data = pickle.load(fp)
+        #
+        # file_name = './' + 'output_postwita_20_80_nemar/' + 'nemar_9999.pkl'
+        # with open(file_name, "rb") as file:
+        #     twita2080_data = pickle.load(file)
+        #
+        # table, result = nemar_test(twita20_data, twita2080_data)
+        # print(table)
+        #
+        # # summarize the finding
+        # print('statistic=%.3f, p-value=%.3f' % (result.statistic, result.pvalue))
+        # # interpret the p-value
+        # alpha = 0.05
+        # if result.pvalue > alpha:
+        #     print('Same proportions of errors (fail to reject H0)')
+        # else:
+        #     print('Different proportions of errors (reject H0)')
+
+        # ISDT
+
+        # file_name = './' + 'output_isdt_20_nemar/' + 'nemar_19999.pkl'
+        # with open(file_name, "rb") as fp:
+        #     isdt20_data = pickle.load(fp)
+        #
+        # file_name = './' + 'output_isdt_20_80_nemar/' + 'nemar_19999.pkl'
+        # with open(file_name, "rb") as file:
+        #     isdt2080_data = pickle.load(file)
+        #
+        # table, result = nemar_test(isdt20_data, isdt2080_data)
+        # print(table)
+        #
+        # # summarize the finding
+        # print('statistic=%.3f, p-value=%.3f' % (result.statistic, result.pvalue))
+        # # interpret the p-value
+        # alpha = 0.05
+        # if result.pvalue > alpha:
+        #     print('Same proportions of errors (fail to reject H0)')
+        # else:
+        #     print('Different proportions of errors (reject H0)')
+
+
+        # PRINT DI DATASET
+
+        file_name = './' + 'output_evalita_100_BASE_nemar/' + 'nemar_29999.pkl'
         with open(file_name, "rb") as fp:
             prova = pickle.load(fp)
         df = pd.DataFrame.from_dict(prova, orient='index')
