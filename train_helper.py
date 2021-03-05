@@ -320,10 +320,10 @@ class evaluator:
     @auto_init_args
     def __init__(self, inv_tag_vocab, model, experiment):
         self.expe = experiment
-        self.nemar_counts = {}
+        self.nemar_counts = []
 
     def evaluate(self, data, k_counts):
-        self.nemar_counts = {}
+        self.nemar_counts = []
         self.model.eval()
         eval_stats = tracker(["log_loss"])
         if self.expe.config.f1_score:
@@ -357,11 +357,11 @@ class evaluator:
                 temp_d = ((label == pred) * mask)
                 for x in range(len(temp_d)):
                     for y in range(len(temp_d[x])):
-                        self.nemar_counts[data[x][y]] = {
-                            'res': temp_d[x][y],
-                            'true_tag': self.inv_tag_vocab[label[x][y]],
-                            'pred_tag': self.inv_tag_vocab[pred[x][y]]
-                             }
+                        self.nemar_counts.append(data[x][y])
+                        #     'res': temp_d[x][y],
+                        #     'true_tag': self.inv_tag_vocab[label[x][y]],
+                        #     'pred_tag': self.inv_tag_vocab[pred[x][y]]
+                        #      }
 
             eval_stats.update(
                 {"log_loss": log_loss}, mask.sum())
