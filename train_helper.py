@@ -323,21 +323,20 @@ class evaluator:
         self.nemar_counts = []
 
     def evaluate(self, data, k_counts):
-        self.nemar_counts = []
         self.model.eval()
         eval_stats = tracker(["log_loss"])
         if self.expe.config.f1_score:
             reporter = f1_reporter(self.inv_tag_vocab)
         else:
             reporter = accuracy_reporter()
-        for data, mask, char, char_mask, label, _ in \
+        for mini_data, mask, char, char_mask, label, _ in \
             minibatcher(
                 word_data=data[0],
                 char_data=data[1],
                 label=data[2],
                 batch_size=self.expe.config.batch_size,
                 shuffle=False):
-            outputs = self.model(data, mask, char, char_mask,
+            outputs = self.model(mini_data, mask, char, char_mask,
                                  label, None, None, 1.0)
             pred, log_loss = outputs[-1], outputs[1]
             reporter.update(pred, label, mask)
@@ -354,15 +353,26 @@ class evaluator:
                         if mm[1] == k:
                             k_counts[k] += 1
 
+                self.nemar_counts = {}
+                self.word_ind_dictionary = {}
+                ### todo check
+                counter = 0
+                for s_ind in range(len(list(data[0]))):
+                    for w_ind in range(len(data[0][s_ind])):
+                        self.word_ind_dictionary[(s_ind, w_ind)] = counter
+                        self.nemar_counts[counter] = {}
+                        counter += 1
+                ###
+
                 temp_d = ((label == pred) * mask)
                 for x in range(len(temp_d)):
                     for y in range(len(temp_d[x])):
-                        self.nemar_counts.append(data[x][y])
-                        #     'res': temp_d[x][y],
-                        #     'true_tag': self.inv_tag_vocab[label[x][y]],
-                        #     'pred_tag': self.inv_tag_vocab[pred[x][y]]
-                        #      }
-
+                        right_index = self.word_ind_dictionary[(x, y)]
+                        self.nemar_counts[right_index] = {
+                            'res': temp_d[x][y],
+                            'true_tag': self.inv_tag_vocab[label[x][y]],
+                            'pred_tag': self.inv_tag_vocab[pred[x][y]]
+                             }
             eval_stats.update(
                 {"log_loss": log_loss}, mask.sum())
         perf, res = reporter.report()
