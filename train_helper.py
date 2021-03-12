@@ -365,14 +365,16 @@ class evaluator:
                 ###
 
                 temp_d = ((label == pred) * mask)
-                for x in range(len(temp_d)):
-                    for y in range(len(temp_d[x])):
+                it_temp_d = 0
+                for x in _:
+                    for y in range(len(data[0][x])):
                         right_index = self.word_ind_dictionary[(x, y)]
                         self.nemar_counts[right_index] = {
-                            'res': temp_d[x][y],
-                            'true_tag': self.inv_tag_vocab[label[x][y]],
-                            'pred_tag': self.inv_tag_vocab[pred[x][y]]
+                            'res': temp_d[it_temp_d][y],
+                            'true_tag': self.inv_tag_vocab[label[it_temp_d][y]],
+                            'pred_tag': self.inv_tag_vocab[pred[it_temp_d][y]]
                              }
+                    it_temp_d += 1
             eval_stats.update(
                 {"log_loss": log_loss}, mask.sum())
         perf, res = reporter.report()
