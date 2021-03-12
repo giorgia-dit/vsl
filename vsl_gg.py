@@ -282,7 +282,7 @@ def run(e):
 def my_args():
     file = 'it_postwita-ud-'  # {'' (evalita), 'it_isdt-ud-', 'it_postwita-ud-', 'fr-ud-'}
     data_group = 'ud'  # {ud, evalita}
-    lab_ratio = 0.2
+    lab_ratio = 1.0
     unlab_ratio = None
 
     data_file_path = f"./input/preprocessed/{file}pproc"
