@@ -320,9 +320,20 @@ class evaluator:
     @auto_init_args
     def __init__(self, inv_tag_vocab, model, experiment):
         self.expe = experiment
-        self.nemar_counts = []
+        self.nemar_counts = {}
 
     def evaluate(self, data, k_counts):
+        self.nemar_counts = {}
+        ###
+        self.word_ind_dictionary = {}
+        ### todo check
+        counter = 0
+        for s_ind in range(len(list(data[0]))):
+            for w_ind in range(len(data[0][s_ind])):
+                self.word_ind_dictionary[(s_ind, w_ind)] = counter
+                self.nemar_counts[counter] = {}
+                counter += 1
+        ###
         self.model.eval()
         eval_stats = tracker(["log_loss"])
         if self.expe.config.f1_score:
@@ -352,17 +363,6 @@ class evaluator:
                     for mm in mm_verbose:
                         if mm[1] == k:
                             k_counts[k] += 1
-
-                self.nemar_counts = {}
-                self.word_ind_dictionary = {}
-                ### todo check
-                counter = 0
-                for s_ind in range(len(list(data[0]))):
-                    for w_ind in range(len(data[0][s_ind])):
-                        self.word_ind_dictionary[(s_ind, w_ind)] = counter
-                        self.nemar_counts[counter] = {}
-                        counter += 1
-                ###
 
                 temp_d = ((label == pred) * mask)
                 it_temp_d = 0
