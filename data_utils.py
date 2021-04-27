@@ -39,12 +39,12 @@ class data_processor:
                 test_data = dataset['test']
 
                 # TODO FIX
-                # train_data[0] = train_data[0][:3]
-                # train_data[1] = train_data[1][:3]
-                # dev_data[0] = dev_data[0][:3]
-                # dev_data[1] = dev_data[1][:3]
-                # test_data[0] = test_data[0][:3]
-                # test_data[1] = test_data[1][:3]
+                train_data[0] = train_data[0][:3]
+                train_data[1] = train_data[1][:3]
+                dev_data[0] = dev_data[0][:3]
+                dev_data[1] = dev_data[1][:3]
+                test_data[0] = test_data[0][:3]
+                test_data[1] = test_data[1][:3]
 
             else:
                 train_data, dev_data, test_data = pickle.load(infile)
@@ -61,7 +61,7 @@ class data_processor:
                     unlabeled_data = dataset['unlabel'][0]
 
             # TODO FIX
-            # unlabeled_data = unlabeled_data[:3]
+            unlabeled_data = unlabeled_data[:3]
 
             train_v_data = train_data[0] + unlabeled_data
 

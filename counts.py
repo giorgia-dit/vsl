@@ -226,11 +226,13 @@ def plot_combinations(comb_count, dataset):
 def nemar_test(data_dict1, data_dict2):
     nemar_dict = {}
     for obs_i in range(len(data_dict1.keys())):
+        if data_dict1[list(data_dict1.keys())[obs_i]]['true_tag'] != data_dict2[list(data_dict2.keys())[obs_i]]['true_tag']:
+            print(list(data_dict1.keys())[obs_i], list(data_dict2.keys())[obs_i], ' Error!')
         nemar_dict[obs_i] = {}
         nemar_dict[obs_i]['c1'] = data_dict1[list(data_dict1.keys())[obs_i]]['res']
         nemar_dict[obs_i]['c2'] = data_dict2[list(data_dict2.keys())[obs_i]]['res']
 
-    table = [[-1, -1], [-1, -1]]
+    table = [[0, 0], [0, 0]]
 
     for obs_i in range(len(nemar_dict.keys())):
         if nemar_dict[obs_i]['c1'] == nemar_dict[obs_i]['c2']:
@@ -370,6 +372,7 @@ if __name__ == '__main__':
         # with open(file_name, "rb") as file:
         #     evalita2080_data = pickle.load(file)
         #
+        #
         # table, result = nemar_test(evalita20_data, evalita2080_data)
         # print(table)
         #
@@ -392,6 +395,8 @@ if __name__ == '__main__':
         # with open(file_name, "rb") as file:
         #     twita2080_data = pickle.load(file)
         #
+        # assert len(twita20_data.keys()) == len(twita2080_data.keys())
+        #
         # table, result = nemar_test(twita20_data, twita2080_data)
         # print(table)
         #
@@ -406,13 +411,15 @@ if __name__ == '__main__':
 
         # ISDT
 
-        # file_name = './' + 'output_isdt_20_nemar/' + 'nemar_19999.pkl'
+        # file_name = './' + 'output_isdt_20_nemar/' + 'nemar_29999.pkl'
         # with open(file_name, "rb") as fp:
         #     isdt20_data = pickle.load(fp)
         #
-        # file_name = './' + 'output_isdt_20_80_nemar/' + 'nemar_19999.pkl'
+        # file_name = './' + 'output_isdt_20_80_nemar/' + 'nemar_29999.pkl'
         # with open(file_name, "rb") as file:
         #     isdt2080_data = pickle.load(file)
+        #
+        # assert len(isdt20_data.keys()) == len(isdt2080_data.keys())
         #
         # table, result = nemar_test(isdt20_data, isdt2080_data)
         # print(table)
@@ -427,11 +434,86 @@ if __name__ == '__main__':
         #     print('Different proportions of errors (reject H0)')
 
 
-        # PRINT DI DATASET
+        # EVALITA BERT
 
-        file_name = './' + 'output_evalita_100_BASE_nemar/' + 'nemar_29999.pkl'
+        # file_name = './' + 'output_evalita_100_BASE_nemar/' + 'nemar_29999.pkl'
+        # with open(file_name, "rb") as fp:
+        #     evalita_base_data = pickle.load(fp)
+        #
+        # file_name = './' + 'output_evalita_100_nemar/' + 'nemar_29999.pkl'
+        # with open(file_name, "rb") as file:
+        #     evalita_bert_data = pickle.load(file)
+        #
+        # del evalita_bert_data[0.0]
+        #
+        # assert len(evalita_base_data.keys()) == len(evalita_bert_data.keys())
+        #
+        # table, result = nemar_test(evalita_base_data, evalita_bert_data)
+        # print(table)
+        #
+        # # summarize the finding
+        # print('statistic=%.3f, p-value=%.3f' % (result.statistic, result.pvalue))
+        # # interpret the p-value
+        # alpha = 0.05
+        # if result.pvalue > alpha:
+        #     print('Same proportions of errors (fail to reject H0)')
+        # else:
+        #     print('Different proportions of errors (reject H0)')
+
+
+        # TWITA BERT
+
+        # file_name = './' + 'output_postwita_100_BASE_nemar/' + 'nemar_29999.pkl'
+        # with open(file_name, "rb") as fp:
+        #     postwita_base_data = pickle.load(fp)
+        #
+        # file_name = './' + 'output_postwita_100_nemar/' + 'nemar_19999.pkl'
+        # with open(file_name, "rb") as file:
+        #     postwita_bert_data = pickle.load(file)
+        #
+        # del postwita_bert_data[0.0]
+        #
+        # assert len(postwita_base_data.keys()) == len(postwita_bert_data.keys())
+        #
+        #
+        # table, result = nemar_test(postwita_base_data, postwita_bert_data)
+        # print(table)
+        #
+        # # summarize the finding
+        # print('statistic=%.3f, p-value=%.3f' % (result.statistic, result.pvalue))
+        # # interpret the p-value
+        # alpha = 0.05
+        # if result.pvalue > alpha:
+        #     print('Same proportions of errors (fail to reject H0)')
+        # else:
+        #     print('Different proportions of errors (reject H0)')
+
+
+        # ISDT BERT
+
+        file_name = './' + 'output_isdt_100_BASE_nemar/' + 'nemar_29999.pkl'
         with open(file_name, "rb") as fp:
-            prova = pickle.load(fp)
-        df = pd.DataFrame.from_dict(prova, orient='index')
+            isdt_base_data = pickle.load(fp)
 
-        print(df)
+        file_name = './' + 'output_isdt_100_nemar/' + 'nemar_19999.pkl'
+        with open(file_name, "rb") as file:
+            isdt_bert_data = pickle.load(file)
+
+        del isdt_bert_data[0.0]
+
+        assert len(isdt_base_data.keys()) == len(isdt_bert_data.keys())
+
+        table, result = nemar_test(isdt_base_data, isdt_bert_data)
+        print(table)
+
+        # summarize the finding
+        print('statistic=%.3f, p-value=%.3f' % (result.statistic, result.pvalue))
+        # interpret the p-value
+        alpha = 0.05
+        if result.pvalue > alpha:
+            print('Same proportions of errors (fail to reject H0)')
+        else:
+            print('Different proportions of errors (reject H0)')
+
+
+
